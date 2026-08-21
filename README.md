@@ -1,0 +1,119 @@
+# Thesis Experiment
+
+Final fixed-PID versus PPO gain-scheduling versus direct-PPO path-following
+experiment. All controller arms use the same MuJoCo plant, allocator, speed PID,
+observation history, scenario schema, 500 Hz physics, and 50 Hz learned-policy
+rate.
+
+`PLAN.md` is the scientific protocol. `TODO.md` is the gated execution list.
+`DECISIONS.md` records changes made before and after the final freeze.
+
+## Setup
+
+From `D:\Msc\Experiments\Thesis_Experiment`:
+
+```powershell
+..\venv\Scripts\python.exe -m pip install -r requirements.txt
+..\venv\Scripts\python.exe -m pytest -q
+..\venv\Scripts\python.exe make_manifests.py
+```
+
+The disturbance severities, derivative filter, fixed PID gains, scheduler box,
+and absolute gain-rate limits are frozen in `DECISIONS.md`. PPO hyperparameters
+remain development values until the one-seed runs are accepted.
+
+```powershell
+..\venv\Scripts\python.exe probe_sensitivity.py --probe all --development-default
+```
+
+## Execution Flow
+
+1. The calibration below is historical and should only be rerun if the PID
+freeze is deliberately reopened. It overwrites the tracked calibration artifact:
+
+```powershell
+..\venv\Scripts\python.exe calibrate_pid.py --per-path
+```
+
+To reapply the selection rule and validation to existing candidate caches
+without rerunning differential evolution:
+
+```powershell
+..\venv\Scripts\python.exe calibrate_pid.py --reselect-only --per-path
+```
+
+The validation-only Kp boundary diagnostic used for the current freeze is:
+
+```powershell
+..\venv\Scripts\python.exe probe_pid_boundary.py
+```
+
+2. Print the four one-seed development commands, then execute them:
+
+```powershell
+..\venv\Scripts\python.exe run_training_matrix.py --phase development --timesteps 1000000
+..\venv\Scripts\python.exe run_training_matrix.py --phase development --timesteps 1000000 --execute
+```
+
+3. Debug only with `manifests/train.json` and `manifests/validation.json`. Freeze
+the code, budget, gains, severities, manifests, and seeds before the final run.
+
+4. Run the frozen five-seed matrix:
+
+```powershell
+..\venv\Scripts\python.exe run_training_matrix.py --phase final --timesteps <FROZEN_BUDGET> --execute
+```
+
+5. Evaluate the complete model matrix on the held-out manifest:
+
+```powershell
+..\venv\Scripts\python.exe evaluate.py `
+  --manifest manifests\held_out.json `
+  --models-root artifacts\models `
+  --run-id final
+```
+
+6. Generate paired effect intervals and view the immutable results:
+
+```powershell
+..\venv\Scripts\python.exe analyze.py `
+  --episodes artifacts\results\final\episodes.csv
+..\venv\Scripts\python.exe dashboard.py `
+  --results artifacts\results\final
+```
+
+The dashboard has two tabs. **Batch results** reads the immutable directory given
+by `--results`, and is the only tab whose numbers are official. **Interactive**
+builds a `scenarios.Scenario` from the drawer controls and runs it on demand
+through the same `rollout.run_episode` the evaluator uses, so a scenario replayed
+there reproduces the batch trace sample for sample — asserted by
+`tests/test_dashboard.py`. Interactive runs write nothing.
+
+`--results` is optional; without it only the interactive tab has content. PPO
+artifacts are discovered under `--models-root` (default `artifacts/models`), and
+`--calibration` defaults to `artifacts/calibration/calibration.json`, falling back
+to the development gain box with a visible warning when that file does not exist
+yet:
+
+```powershell
+..\venv\Scripts\python.exe dashboard.py
+```
+
+## Artifacts
+
+- `manifests/`: serialized paired scenarios and RNG seeds.
+- `artifacts/calibration/`: PID gains, scheduler bounds, and all candidate rows.
+- `artifacts/models/<arm>/seed_<seed>/`: checkpoints, monitor data, validation
+  history, configuration, package versions, and timing.
+- `artifacts/results/<run-id>/`: immutable manifest/calibration copies, episode
+  table, aggregate table, hashes, traces, and paired-effect tables.
+
+Development defaults are never thesis results. Official results require the
+freeze gate, all five declared seeds, deterministic policy actions, and the
+complete paired result matrix.
+
+`held_out.json` is the primary generated-path test. `structural_ood.json` and
+`stress.json` are separate appendix evaluations and must not be pooled with it.
+Use `--save-traces` on a small, preselected representative manifest when 500 Hz
+dashboard traces are needed; the full evaluator otherwise stores episode rows
+without duplicating high-rate trajectories for every model and scenario.

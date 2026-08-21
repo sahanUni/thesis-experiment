@@ -1,0 +1,88 @@
+# Experiment Decision Log
+
+This log records protocol changes after the initial plan. Parameter changes made
+before the final freeze are allowed only with a reason and validation evidence.
+After the freeze, correctness fixes invalidate every affected final run.
+
+## 2026-08-19: Initial implementation
+
+- Use one `PathFollowingEnv` for fixed PID, PPO gain scheduling, and direct PPO.
+- Keep MuJoCo physics and PID updates at 500 Hz; both PPO policies act at 50 Hz.
+- Restrict disturbances to actuator delay and cross-track sensor noise.
+- Use a fixed training catalogue, fixed plus seeded generated validation paths,
+  and separate seeded generated held-out paths.
+- Tune PID gains with bounded, seeded differential evolution and confirm the
+  training shortlist on validation scenarios. SIMC is not used because the
+  closed-loop path-following plant does not provide the simple process model
+  and step-response assumptions that make SIMC attractive.
+- Use completion and failure-adjusted integrated path error as co-primary
+  outcomes while retaining every raw tracking, effort, and failure metric.
+- Keep the dashboard read-only over batch artifacts. It cannot write into or
+  recompute an official result directory.
+- PID candidates use a declared balanced subset of the training manifest:
+  nominal scenarios at all speeds, all stationary conditions at 0.5 m/s, and
+  the transient combined condition at 0.5 m/s. This preserves every training
+  geometry and disturbance type while keeping differential evolution
+  computationally feasible. Final evaluation still uses complete manifests.
+
+## 2026-08-19: Runaway guard correction
+
+The first integration smoke test exposed a 2 m absolute-coordinate guard that
+terminated valid paths. The guard was restored to the inherited 20 m numerical
+safety bound. The independent 1 m path corridor remains the tracking-failure
+criterion. No training or final experiment had been run.
+
+## 2026-08-21: Derivative-filter selection
+
+- Set the derivative-filter time constant to `0.01 s` before PID calibration.
+- Noise-only probes showed that filtering is necessary to prevent command
+  chatter and saturation. Combined delay/noise checks showed that larger time
+  constants add excessive phase lag when used with the selected `0.06 s`
+  actuator delay.
+- The selected `0.01 s` value suppressed the unfiltered noise response while
+  preserving better combined-condition tracking than `0.02 s`, `0.05 s`, or
+  `0.10 s`.
+
+## 2026-08-21: Practical PID selection and Kp boundary audit
+
+- Treat candidates within `0.5%` of the best failure-adjusted error in the
+  highest-completion band as practically equivalent. Select the lowest steering
+  variation, then the lowest gain magnitude, inside that band.
+- Validate five distinct error/smoothness/gain trade-offs rather than numerical
+  optimizer-polishing copies. Existing candidate caches can be reselected with
+  `calibrate_pid.py --reselect-only`.
+- Define the PPO gain box from the validated nominal and robust gains plus a
+  `15%` margin. This avoids exposing PPO to the entire differential-evolution
+  search box. The current box remains provisional until nominal recalibration.
+- The nominal calibration subset contains no injected actuator delay. The robust
+  subset includes stationary delay, noise, combined disturbance, and transient
+  combined scenarios using `0.06 s` delay and `0.0003 m` noise.
+- A validation-only Kp sweep found that nominal error continued improving above
+  the old `Kp=50` search ceiling. Error plateaued around `Kp=250-400`; `Kp=600`
+  sharply increased steering variation and wheel saturation. In the robust set,
+  `Kp=40` increased error by roughly tenfold and `Kp>=50` caused completion loss.
+- Therefore the robust optimum is demonstrably delay-limited, while the nominal
+  PID must be jointly recalibrated with an expanded Kp range before calibration
+  and PPO scheduler bounds are frozen.
+
+## 2026-08-22: Pragmatic calibration freeze
+
+- Do not spend another multi-hour differential-evolution run pursuing a perfect
+  delay-free PID. Freeze the nominal PID at `(250.0, 4.5454, 0.3967)`, retaining
+  the jointly calibrated `Ki/Kd` and refining only `Kp` with the boundary sweep.
+- On validation, `Kp=250` was within `0.31%` of the lowest error at `Kp=400`
+  while reducing steering variation by about `40%`. On all six training paths,
+  `Kp=250` had lower error and roughly one quarter of the steering variation of
+  `Kp=400`. Both completed every scenario.
+- Keep the robust PID at `(29.0026, 4.4669, 2.1370)`. Its calibration explicitly
+  includes the selected delay and noise conditions.
+- Freeze the scheduler action box at `Kp 15-300`, `Ki 3.5-5.0`, and `Kd 0-3.0`.
+  The lower Kp limit is supported by earlier Blind_PPO delay sweeps; its exact
+  PID results remain prior pilot evidence because that protocol used different
+  paths and disturbance schedules.
+- Use absolute gain-rate limits `(20.0, 0.5, 1.5)` per second for `(Kp, Ki, Kd)`.
+  A box-relative limiter would become roughly seven times faster merely because
+  the Kp box was widened, contradicting the prior finding that gain jitter is
+  harmful on delayed plants.
+- This is a strong empirical baseline, not a claim of globally optimal PID
+  gains. No final-test result was inspected or used for this decision.

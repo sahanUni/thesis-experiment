@@ -1,0 +1,2827 @@
+{
+  "schema_version": 1,
+  "name": "stress_evaluation",
+  "split": "stress",
+  "scenarios": [
+    {
+      "scenario_id": "stress-spiral-v0.3-stationary-nominal",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "nominal",
+      "noise_seed": 20260819,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.3-stationary-delay",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "delay",
+      "noise_seed": 20260820,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.3-stationary-noise",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "noise",
+      "noise_seed": 20260821,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.3-stationary-combined",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "combined",
+      "noise_seed": 20260822,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.3-transient-nominal",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "nominal",
+      "noise_seed": 20260823,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.3-transient-delay",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "delay",
+      "noise_seed": 20260824,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.3-transient-noise",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "noise",
+      "noise_seed": 20260825,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.3-transient-combined",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "combined",
+      "noise_seed": 20260826,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        },
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.5-stationary-nominal",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "nominal",
+      "noise_seed": 20260827,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.5-stationary-delay",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "delay",
+      "noise_seed": 20260828,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.5-stationary-noise",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "noise",
+      "noise_seed": 20260829,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.5-stationary-combined",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "combined",
+      "noise_seed": 20260830,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.5-transient-nominal",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "nominal",
+      "noise_seed": 20260831,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.5-transient-delay",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "delay",
+      "noise_seed": 20260832,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.5-transient-noise",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "noise",
+      "noise_seed": 20260833,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.5-transient-combined",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "combined",
+      "noise_seed": 20260834,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        },
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.7-stationary-nominal",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "nominal",
+      "noise_seed": 20260835,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.7-stationary-delay",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "delay",
+      "noise_seed": 20260836,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.7-stationary-noise",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "noise",
+      "noise_seed": 20260837,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.7-stationary-combined",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "combined",
+      "noise_seed": 20260838,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.7-transient-nominal",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "nominal",
+      "noise_seed": 20260839,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.7-transient-delay",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "delay",
+      "noise_seed": 20260840,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.7-transient-noise",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "noise",
+      "noise_seed": 20260841,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-spiral-v0.7-transient-combined",
+      "path": {
+        "kind": "spiral"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "combined",
+      "noise_seed": 20260842,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        },
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 14.05856947728258,
+        "max_abs_curvature": 2.8572399629991008,
+        "rms_curvature": 0.9967103615231314,
+        "curvature_total_variation": 2.5239064752497087,
+        "max_abs_curvature_rate": 86.22438021522873,
+        "curvature_sign_reversals": 0
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.3-stationary-nominal",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "nominal",
+      "noise_seed": 20260843,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.3-stationary-delay",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "delay",
+      "noise_seed": 20260844,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.3-stationary-noise",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "noise",
+      "noise_seed": 20260845,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.3-stationary-combined",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "combined",
+      "noise_seed": 20260846,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.3-transient-nominal",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "nominal",
+      "noise_seed": 20260847,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.3-transient-delay",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "delay",
+      "noise_seed": 20260848,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.3-transient-noise",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "noise",
+      "noise_seed": 20260849,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.3-transient-combined",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "combined",
+      "noise_seed": 20260850,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        },
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.5-stationary-nominal",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "nominal",
+      "noise_seed": 20260851,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.5-stationary-delay",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "delay",
+      "noise_seed": 20260852,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.5-stationary-noise",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "noise",
+      "noise_seed": 20260853,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.5-stationary-combined",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "combined",
+      "noise_seed": 20260854,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.5-transient-nominal",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "nominal",
+      "noise_seed": 20260855,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.5-transient-delay",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "delay",
+      "noise_seed": 20260856,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.5-transient-noise",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "noise",
+      "noise_seed": 20260857,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.5-transient-combined",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "combined",
+      "noise_seed": 20260858,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        },
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.7-stationary-nominal",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "nominal",
+      "noise_seed": 20260859,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.7-stationary-delay",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "delay",
+      "noise_seed": 20260860,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.7-stationary-noise",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "noise",
+      "noise_seed": 20260861,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.7-stationary-combined",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "combined",
+      "noise_seed": 20260862,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.7-transient-nominal",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "nominal",
+      "noise_seed": 20260863,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.7-transient-delay",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "delay",
+      "noise_seed": 20260864,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.7-transient-noise",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "noise",
+      "noise_seed": 20260865,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag-v0.7-transient-combined",
+      "path": {
+        "kind": "zigzag"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "combined",
+      "noise_seed": 20260866,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        },
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942309585267079,
+        "max_abs_curvature": 6.667856727148089,
+        "rms_curvature": 2.4746027259791585,
+        "curvature_total_variation": 53.34285381719481,
+        "max_abs_curvature_rate": 679.3035492945216,
+        "curvature_sign_reversals": 4
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.3-stationary-nominal",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "nominal",
+      "noise_seed": 20260867,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.3-stationary-delay",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "delay",
+      "noise_seed": 20260868,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.3-stationary-noise",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "noise",
+      "noise_seed": 20260869,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.3-stationary-combined",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "combined",
+      "noise_seed": 20260870,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.3-transient-nominal",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "nominal",
+      "noise_seed": 20260871,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.3-transient-delay",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "delay",
+      "noise_seed": 20260872,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.3-transient-noise",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "noise",
+      "noise_seed": 20260873,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.3-transient-combined",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "combined",
+      "noise_seed": 20260874,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        },
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.5-stationary-nominal",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "nominal",
+      "noise_seed": 20260875,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.5-stationary-delay",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "delay",
+      "noise_seed": 20260876,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.5-stationary-noise",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "noise",
+      "noise_seed": 20260877,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.5-stationary-combined",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "combined",
+      "noise_seed": 20260878,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.5-transient-nominal",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "nominal",
+      "noise_seed": 20260879,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.5-transient-delay",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "delay",
+      "noise_seed": 20260880,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.5-transient-noise",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "noise",
+      "noise_seed": 20260881,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.5-transient-combined",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "combined",
+      "noise_seed": 20260882,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        },
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.7-stationary-nominal",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "nominal",
+      "noise_seed": 20260883,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.7-stationary-delay",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "delay",
+      "noise_seed": 20260884,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.7-stationary-noise",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "noise",
+      "noise_seed": 20260885,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.7-stationary-combined",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "combined",
+      "noise_seed": 20260886,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.7-transient-nominal",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "nominal",
+      "noise_seed": 20260887,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.7-transient-delay",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "delay",
+      "noise_seed": 20260888,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.7-transient-noise",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "noise",
+      "noise_seed": 20260889,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-zigzag30-v0.7-transient-combined",
+      "path": {
+        "kind": "zigzag30"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "combined",
+      "noise_seed": 20260890,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        },
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.942197746427243,
+        "max_abs_curvature": 8.335810251888342,
+        "rms_curvature": 3.0514731944702134,
+        "curvature_total_variation": 50.01486151134349,
+        "max_abs_curvature_rate": 833.581025188852,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.3-stationary-nominal",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "nominal",
+      "noise_seed": 20260891,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.3-stationary-delay",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "delay",
+      "noise_seed": 20260892,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.3-stationary-noise",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "noise",
+      "noise_seed": 20260893,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.3-stationary-combined",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "stationary",
+      "condition": "combined",
+      "noise_seed": 20260894,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.3-transient-nominal",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "nominal",
+      "noise_seed": 20260895,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.3-transient-delay",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "delay",
+      "noise_seed": 20260896,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.3-transient-noise",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "noise",
+      "noise_seed": 20260897,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.3-transient-combined",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.3,
+      "evaluation_mode": "transient",
+      "condition": "combined",
+      "noise_seed": 20260898,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        },
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.5-stationary-nominal",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "nominal",
+      "noise_seed": 20260899,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.5-stationary-delay",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "delay",
+      "noise_seed": 20260900,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.5-stationary-noise",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "noise",
+      "noise_seed": 20260901,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.5-stationary-combined",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "stationary",
+      "condition": "combined",
+      "noise_seed": 20260902,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.5-transient-nominal",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "nominal",
+      "noise_seed": 20260903,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.5-transient-delay",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "delay",
+      "noise_seed": 20260904,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.5-transient-noise",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "noise",
+      "noise_seed": 20260905,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.5-transient-combined",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.5,
+      "evaluation_mode": "transient",
+      "condition": "combined",
+      "noise_seed": 20260906,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        },
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.7-stationary-nominal",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "nominal",
+      "noise_seed": 20260907,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.7-stationary-delay",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "delay",
+      "noise_seed": 20260908,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.7-stationary-noise",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "noise",
+      "noise_seed": 20260909,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.7-stationary-combined",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "stationary",
+      "condition": "combined",
+      "noise_seed": 20260910,
+      "initial_delay_s": 0.06,
+      "initial_noise_std_m": 0.0003,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.7-transient-nominal",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "nominal",
+      "noise_seed": 20260911,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.7-transient-delay",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "delay",
+      "noise_seed": 20260912,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.7-transient-noise",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "noise",
+      "noise_seed": 20260913,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    },
+    {
+      "scenario_id": "stress-needle-v0.7-transient-combined",
+      "path": {
+        "kind": "needle"
+      },
+      "target_speed": 0.7,
+      "evaluation_mode": "transient",
+      "condition": "combined",
+      "noise_seed": 20260914,
+      "initial_delay_s": 0.0,
+      "initial_noise_std_m": 0.0,
+      "initial_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "kind": "delay_step",
+          "start_s": 6.0,
+          "value": 0.06,
+          "end_s": null
+        },
+        {
+          "kind": "noise_step",
+          "start_s": 6.0,
+          "value": 0.0003,
+          "end_s": null
+        }
+      ],
+      "geometry": {
+        "length_m": 6.392035828998459,
+        "max_abs_curvature": 20.03383633082264,
+        "rms_curvature": 4.945457089446633,
+        "curvature_total_variation": 120.20301798493568,
+        "max_abs_curvature_rate": 2003.3836330823026,
+        "curvature_sign_reversals": 2
+      }
+    }
+  ]
+}
