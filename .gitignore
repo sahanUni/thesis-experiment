@@ -22,4 +22,5 @@ artifacts/probes/*
 !artifacts/probes/filter_sensitivity.csv
 !artifacts/probes/kp_boundary_validation.csv
 !artifacts/probes/kp_nominal_training_check.csv
+!artifacts/probes/kp_robust_lowering.csv
 runs/
