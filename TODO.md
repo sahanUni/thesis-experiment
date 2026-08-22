@@ -111,22 +111,25 @@ does not make the benchmark uniformly infeasible.
 **Gate:** the global PID is competitive, stable, and demonstrably not selected
 from final test performance.
 
-## 6. Common Reward and PPO Training Pipeline
+## 6. Native PPO Training Pipelines
 
-- [x] Define a common task reward from progress, true tracking, physical steering
-  variation, completion, and failure.
-- [ ] Scale time-accumulating reward terms per simulated second.
+- [x] Port the proven Blind_PPO scheduler reward and EndToEnd_RL direct reward.
+- [x] Preserve the native reward scaling for each 50 Hz controller.
 - [ ] Audit quitting, circling, crawling, chatter, and saturation incentives.
-- [x] Define the common normalized feedback/history observation block.
+- [x] Preserve the shared causal feedback information in native 170-value and
+  130-value observation contracts.
 - [x] Define and document only the necessary controller-specific observation
   fields.
 - [x] Implement the normalized scheduler gain action and frozen rate limit.
 - [x] Implement the direct steering action with ten-tick zero-order hold.
 - [x] Use the same PPO implementation, network class, and decision rate.
-- [x] Implement deterministic validation checkpoint selection using physical
-  metrics rather than training reward.
+- [x] Select both learned-controller checkpoints on the same frozen physical
+  validation subset using completion then failure-adjusted error.
 - [x] Save complete run configurations, manifests, checkpoints, monitor data,
   training curves, environment versions, and hashes.
+- [x] Apply the shared `0.01 s` derivative filter to fixed and scheduled PID.
+- [x] Increase the declared delay severity and disturbed-training range to
+  `0.15 s`.
 
 **Gate:** smoke runs for both architectures complete and all artifacts can be
 loaded by the batch evaluator.
@@ -143,8 +146,10 @@ loaded by the batch evaluator.
 - [ ] Confirm that scheduler gains actually change with observations/events.
 - [ ] Confirm that direct PPO does not chatter or exploit termination.
 - [ ] Confirm that disturbance-trained agents retain acceptable nominal behavior.
-- [ ] Determine one common final PPO decision-step budget from convergence data.
-- [ ] Limit hyperparameter iteration to a recorded equal budget per architecture.
+- [x] Restore the proven scheduler and direct-PPO training budgets.
+- [x] Freeze the previously validated PPO parameters per architecture.
+- [x] Revalidate the fixed robust PID under the new `0.15 s` delay and replace
+  the unstable 60 ms calibration with the prior-informed 150 ms baseline.
 - [ ] Run the complete batch-evaluator pipeline on validation manifests.
 - [ ] Verify dashboard execution and trace visualizations.
 

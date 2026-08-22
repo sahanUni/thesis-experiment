@@ -38,7 +38,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260820,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -90,7 +90,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260822,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -153,7 +153,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -219,7 +219,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -273,7 +273,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260828,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -325,7 +325,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260830,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -388,7 +388,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -454,7 +454,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -508,7 +508,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260836,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -560,7 +560,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260838,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -623,7 +623,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -689,7 +689,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -743,7 +743,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260844,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -795,7 +795,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260846,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -858,7 +858,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -924,7 +924,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -978,7 +978,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260852,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -1030,7 +1030,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260854,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -1093,7 +1093,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -1159,7 +1159,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -1213,7 +1213,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260860,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -1265,7 +1265,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260862,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -1328,7 +1328,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -1394,7 +1394,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -1448,7 +1448,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260868,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -1500,7 +1500,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260870,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -1563,7 +1563,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -1629,7 +1629,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -1683,7 +1683,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260876,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -1735,7 +1735,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260878,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -1798,7 +1798,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -1864,7 +1864,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -1918,7 +1918,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260884,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -1970,7 +1970,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260886,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -2033,7 +2033,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -2099,7 +2099,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -2153,7 +2153,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260892,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -2205,7 +2205,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260894,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -2268,7 +2268,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -2334,7 +2334,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -2388,7 +2388,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260900,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -2440,7 +2440,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260902,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -2503,7 +2503,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -2569,7 +2569,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -2623,7 +2623,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260908,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -2675,7 +2675,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260910,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -2738,7 +2738,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -2804,7 +2804,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {

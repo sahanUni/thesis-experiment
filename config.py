@@ -22,7 +22,7 @@ class ExperimentConfig:
     runaway_m: float = 20.0
     derivative_filter_tau_s: float = 0.01
     actuator_limit: float = 1.0
-    delay_severity_s: float = 0.06
+    delay_severity_s: float = 0.15
     noise_severity_m: float = 0.0003
     transient_start_s: float = 6.0
     final_training_seeds: tuple[int, ...] = (11, 23, 37, 53, 71)
@@ -54,29 +54,9 @@ E_CT_RATE_SCALE_MPS = 2.0
 INTEGRAL_SCALE_MS = 1.0
 SPEED_SCALE_MPS = 1.5
 YAW_RATE_SCALE_RADPS = 10.0
-TRACKING_SCALE_M = 0.005
 PROGRESS_WEIGHT = 5.0
-TRACKING_WEIGHT = 0.035
-STEER_VARIATION_WEIGHT = 0.01
-FINISH_BONUS = 20.0
-FAILURE_PENALTY = 60.0
-TRAIN_DELAY_RANGE_S = (0.0, 0.08)
+TRAIN_DELAY_RANGE_S = (0.0, 0.15)
 TRAIN_NOISE_RANGE_M = (0.0, 0.0004)
-GAIN_RATE_LIMIT_PER_S = (20.0, 0.5, 1.5)
-
-PPO_KWARGS = {
-    "learning_rate": 3e-4,
-    "n_steps": 2048,
-    "batch_size": 256,
-    "n_epochs": 10,
-    "gamma": 0.999,
-    "gae_lambda": 0.95,
-    "clip_range": 0.2,
-    "ent_coef": 0.0,
-    "vf_coef": 0.5,
-    "max_grad_norm": 0.5,
-    "policy_kwargs": {"net_arch": {"pi": [128, 128], "vf": [128, 128]}},
-}
 
 
 PATH_SPLITS: dict[str, tuple[dict[str, Any], ...]] = {

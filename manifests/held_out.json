@@ -52,7 +52,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260820,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -118,7 +118,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260822,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -195,7 +195,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -275,7 +275,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -343,7 +343,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260828,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -409,7 +409,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260830,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -486,7 +486,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -566,7 +566,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -634,7 +634,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260836,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -700,7 +700,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260838,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -777,7 +777,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -857,7 +857,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -925,7 +925,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260844,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -991,7 +991,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260846,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -1068,7 +1068,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -1148,7 +1148,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -1216,7 +1216,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260852,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -1282,7 +1282,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260854,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -1359,7 +1359,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -1439,7 +1439,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -1507,7 +1507,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260860,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -1573,7 +1573,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260862,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -1650,7 +1650,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -1730,7 +1730,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -1798,7 +1798,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260868,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -1864,7 +1864,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260870,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -1941,7 +1941,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -2021,7 +2021,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -2089,7 +2089,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260876,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -2155,7 +2155,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260878,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -2232,7 +2232,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -2312,7 +2312,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -2380,7 +2380,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260884,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -2446,7 +2446,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260886,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -2523,7 +2523,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -2603,7 +2603,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -2671,7 +2671,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260892,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -2737,7 +2737,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260894,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -2814,7 +2814,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -2894,7 +2894,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -2962,7 +2962,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260900,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -3028,7 +3028,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260902,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -3105,7 +3105,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -3185,7 +3185,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -3253,7 +3253,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260908,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -3319,7 +3319,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260910,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -3396,7 +3396,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -3476,7 +3476,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -3544,7 +3544,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260916,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -3610,7 +3610,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260918,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -3687,7 +3687,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -3767,7 +3767,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -3835,7 +3835,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260924,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -3901,7 +3901,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260926,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -3978,7 +3978,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -4058,7 +4058,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -4126,7 +4126,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260932,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -4192,7 +4192,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260934,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -4269,7 +4269,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -4349,7 +4349,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -4417,7 +4417,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260940,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -4483,7 +4483,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260942,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -4560,7 +4560,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -4640,7 +4640,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -4708,7 +4708,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260948,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -4774,7 +4774,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260950,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -4851,7 +4851,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -4931,7 +4931,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -4999,7 +4999,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260956,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -5065,7 +5065,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260958,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -5142,7 +5142,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -5222,7 +5222,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -5290,7 +5290,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260964,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -5356,7 +5356,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260966,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -5433,7 +5433,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -5513,7 +5513,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -5581,7 +5581,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260972,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -5647,7 +5647,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260974,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -5724,7 +5724,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -5804,7 +5804,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -5872,7 +5872,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260980,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -5938,7 +5938,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260982,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -6015,7 +6015,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -6095,7 +6095,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -6163,7 +6163,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260988,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -6229,7 +6229,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260990,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -6306,7 +6306,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -6386,7 +6386,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -6454,7 +6454,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20260996,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -6520,7 +6520,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20260998,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -6597,7 +6597,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -6677,7 +6677,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -6745,7 +6745,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261004,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -6811,7 +6811,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261006,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -6888,7 +6888,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -6968,7 +6968,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -7036,7 +7036,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261012,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -7102,7 +7102,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261014,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -7179,7 +7179,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -7259,7 +7259,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -7327,7 +7327,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261020,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -7393,7 +7393,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261022,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -7470,7 +7470,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -7550,7 +7550,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -7618,7 +7618,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261028,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -7684,7 +7684,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261030,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -7761,7 +7761,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -7841,7 +7841,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -7909,7 +7909,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261036,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -7975,7 +7975,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261038,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -8052,7 +8052,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -8132,7 +8132,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -8200,7 +8200,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261044,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -8266,7 +8266,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261046,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -8343,7 +8343,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -8423,7 +8423,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -8491,7 +8491,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261052,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -8557,7 +8557,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261054,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -8634,7 +8634,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -8714,7 +8714,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -8782,7 +8782,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261060,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -8848,7 +8848,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261062,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -8925,7 +8925,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -9005,7 +9005,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -9073,7 +9073,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261068,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -9139,7 +9139,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261070,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -9216,7 +9216,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -9296,7 +9296,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -9364,7 +9364,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261076,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -9430,7 +9430,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261078,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -9507,7 +9507,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -9587,7 +9587,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -9655,7 +9655,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261084,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -9721,7 +9721,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261086,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -9798,7 +9798,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -9878,7 +9878,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -9946,7 +9946,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261092,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -10012,7 +10012,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261094,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -10089,7 +10089,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -10169,7 +10169,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -10237,7 +10237,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261100,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -10303,7 +10303,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261102,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -10380,7 +10380,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -10460,7 +10460,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -10528,7 +10528,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261108,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -10594,7 +10594,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261110,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -10671,7 +10671,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -10751,7 +10751,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -10819,7 +10819,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261116,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -10885,7 +10885,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261118,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -10962,7 +10962,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -11042,7 +11042,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -11110,7 +11110,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261124,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -11176,7 +11176,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261126,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -11253,7 +11253,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -11333,7 +11333,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -11401,7 +11401,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261132,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -11467,7 +11467,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261134,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -11544,7 +11544,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -11624,7 +11624,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -11692,7 +11692,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261140,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -11758,7 +11758,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261142,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -11835,7 +11835,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -11915,7 +11915,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -11983,7 +11983,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261148,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -12049,7 +12049,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261150,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -12126,7 +12126,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -12206,7 +12206,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -12274,7 +12274,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261156,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -12340,7 +12340,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261158,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -12417,7 +12417,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -12497,7 +12497,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -12565,7 +12565,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261164,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -12631,7 +12631,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261166,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -12708,7 +12708,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -12788,7 +12788,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -12856,7 +12856,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261172,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -12922,7 +12922,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261174,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -12999,7 +12999,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -13079,7 +13079,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -13147,7 +13147,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261180,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -13213,7 +13213,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261182,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -13290,7 +13290,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -13370,7 +13370,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -13438,7 +13438,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261188,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -13504,7 +13504,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261190,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -13581,7 +13581,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -13661,7 +13661,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -13729,7 +13729,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261196,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -13795,7 +13795,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261198,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -13872,7 +13872,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -13952,7 +13952,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -14020,7 +14020,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261204,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -14086,7 +14086,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261206,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -14163,7 +14163,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -14243,7 +14243,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -14311,7 +14311,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261212,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -14377,7 +14377,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261214,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -14454,7 +14454,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -14534,7 +14534,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -14602,7 +14602,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261220,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -14668,7 +14668,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261222,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -14745,7 +14745,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -14825,7 +14825,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -14893,7 +14893,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261228,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -14959,7 +14959,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261230,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -15036,7 +15036,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -15116,7 +15116,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -15184,7 +15184,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261236,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -15250,7 +15250,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261238,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -15327,7 +15327,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -15407,7 +15407,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -15475,7 +15475,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261244,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -15541,7 +15541,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261246,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -15618,7 +15618,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -15698,7 +15698,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -15766,7 +15766,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261252,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -15832,7 +15832,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261254,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -15909,7 +15909,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -15989,7 +15989,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -16057,7 +16057,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261260,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -16123,7 +16123,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261262,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -16200,7 +16200,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -16280,7 +16280,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -16348,7 +16348,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261268,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -16414,7 +16414,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261270,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -16491,7 +16491,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -16571,7 +16571,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -16639,7 +16639,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261276,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -16705,7 +16705,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261278,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -16782,7 +16782,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -16862,7 +16862,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -16930,7 +16930,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261284,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -16996,7 +16996,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261286,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -17073,7 +17073,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -17153,7 +17153,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {
@@ -17221,7 +17221,7 @@
       "evaluation_mode": "stationary",
       "condition": "delay",
       "noise_seed": 20261292,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0,
       "initial_pose": [
         0.0,
@@ -17287,7 +17287,7 @@
       "evaluation_mode": "stationary",
       "condition": "combined",
       "noise_seed": 20261294,
-      "initial_delay_s": 0.06,
+      "initial_delay_s": 0.15,
       "initial_noise_std_m": 0.0003,
       "initial_pose": [
         0.0,
@@ -17364,7 +17364,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         }
       ],
@@ -17444,7 +17444,7 @@
         {
           "kind": "delay_step",
           "start_s": 6.0,
-          "value": 0.06,
+          "value": 0.15,
           "end_s": null
         },
         {

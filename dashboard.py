@@ -65,7 +65,7 @@ CORRIDOR_STRIDE = 5
 SAFE_COMPONENT = re.compile(r"^[a-zA-Z0-9_.-]+$")
 SAFE_ARM = re.compile(r"^[a-z0-9_]+$")
 
-DEFAULT_MODELS_ROOT = config.ROOT / "artifacts" / "models"
+DEFAULT_MODELS_ROOT = config.ROOT / "artifacts" / "models" / "protocol_v2"
 DEFAULT_CALIBRATION = config.ROOT / "artifacts" / "calibration" / "calibration.json"
 
 # Sliders that are plain numbers. (id, label, min, max, step, default)
@@ -249,8 +249,13 @@ class InteractiveRunner:
         self,
         models_root: Path | None = None,
         calibration_path: str | Path | None = None,
+        scheduler_calibration_path: str | Path | None = None,
     ) -> None:
         self.calibration, self.calibration_label = resolve_calibration(calibration_path)
+        scheduler_path = scheduler_calibration_path or (
+            config.ROOT / "artifacts" / "calibration" / "blind_ppo.json"
+        )
+        self.scheduler_calibration = GainCalibration.load(Path(scheduler_path))
         self.models_root = Path(models_root or DEFAULT_MODELS_ROOT)
         self.models = discover_models(self.models_root)
         self.model_error = (
@@ -424,7 +429,11 @@ class InteractiveRunner:
             env = PathFollowingEnv(
                 mode=entry["mode"],
                 training=False,
-                calibration=self.calibration,
+                calibration=(
+                    self.scheduler_calibration
+                    if entry["mode"] == "scheduled"
+                    else self.calibration
+                ),
             )
             predictor = self._policy(entry)
             label = entry["label"]

@@ -2,8 +2,9 @@
 
 Final fixed-PID versus PPO gain-scheduling versus direct-PPO path-following
 experiment. All controller arms use the same MuJoCo plant, allocator, speed PID,
-observation history, scenario schema, 500 Hz physics, and 50 Hz learned-policy
-rate.
+scenario schema, causal feedback information, 500 Hz physics, and 50 Hz
+learned-policy rate. Blind PPO keeps its native 170-value history and direct PPO
+keeps its native 130-value history.
 
 `PLAN.md` is the scientific protocol. `TODO.md` is the gated execution list.
 `DECISIONS.md` records changes made before and after the final freeze.
@@ -18,9 +19,8 @@ From `D:\Msc\Experiments\Thesis_Experiment`:
 ..\venv\Scripts\python.exe make_manifests.py
 ```
 
-The disturbance severities, derivative filter, fixed PID gains, scheduler box,
-and absolute gain-rate limits are frozen in `DECISIONS.md`. PPO hyperparameters
-remain development values until the one-seed runs are accepted.
+The disturbance severities, fixed PID calibration, and native PPO controller
+profiles are recorded in `DECISIONS.md`.
 
 ```powershell
 ..\venv\Scripts\python.exe probe_sensitivity.py --probe all --development-default
@@ -51,9 +51,11 @@ The validation-only Kp boundary diagnostic used for the current freeze is:
 2. Print the four one-seed development commands, then execute them:
 
 ```powershell
-..\venv\Scripts\python.exe run_training_matrix.py --phase development --timesteps 1000000
-..\venv\Scripts\python.exe run_training_matrix.py --phase development --timesteps 1000000 --execute
+..\venv\Scripts\python.exe run_training_matrix.py --phase development
 ```
+
+The command prints four independent processes. Run them in separate terminals
+to train concurrently. Add `--execute` only for sequential execution.
 
 3. Debug only with `manifests/train.json` and `manifests/validation.json`. Freeze
 the code, budget, gains, severities, manifests, and seeds before the final run.
@@ -61,7 +63,7 @@ the code, budget, gains, severities, manifests, and seeds before the final run.
 4. Run the frozen five-seed matrix:
 
 ```powershell
-..\venv\Scripts\python.exe run_training_matrix.py --phase final --timesteps <FROZEN_BUDGET> --execute
+..\venv\Scripts\python.exe run_training_matrix.py --phase final --execute
 ```
 
 5. Evaluate the complete model matrix on the held-out manifest:
@@ -69,7 +71,7 @@ the code, budget, gains, severities, manifests, and seeds before the final run.
 ```powershell
 ..\venv\Scripts\python.exe evaluate.py `
   --manifest manifests\held_out.json `
-  --models-root artifacts\models `
+  --models-root artifacts\models\protocol_v2 `
   --run-id final
 ```
 
@@ -90,7 +92,8 @@ there reproduces the batch trace sample for sample — asserted by
 `tests/test_dashboard.py`. Interactive runs write nothing.
 
 `--results` is optional; without it only the interactive tab has content. PPO
-artifacts are discovered under `--models-root` (default `artifacts/models`), and
+artifacts are discovered under `--models-root` (default
+`artifacts/models/protocol_v2`), and
 `--calibration` defaults to `artifacts/calibration/calibration.json`, falling back
 to the development gain box with a visible warning when that file does not exist
 yet:
@@ -103,8 +106,10 @@ yet:
 
 - `manifests/`: serialized paired scenarios and RNG seeds.
 - `artifacts/calibration/`: PID gains, scheduler bounds, and all candidate rows.
-- `artifacts/models/<arm>/seed_<seed>/`: checkpoints, monitor data, validation
+- `artifacts/models/protocol_v2/<arm>/seed_<seed>/`: checkpoints, monitor data, validation
   history, configuration, package versions, and timing.
+- `artifacts/models/native_ports/`: superseded development checkpoints retained
+  only as diagnostic provenance; they are incompatible with protocol v2.
 - `artifacts/results/<run-id>/`: immutable manifest/calibration copies, episode
   table, aggregate table, hashes, traces, and paired-effect tables.
 

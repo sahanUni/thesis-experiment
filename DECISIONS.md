@@ -86,3 +86,58 @@ criterion. No training or final experiment had been run.
   harmful on delayed plants.
 - This is a strong empirical baseline, not a claim of globally optimal PID
   gains. No final-test result was inspected or used for this decision.
+
+## 2026-08-22: Native PPO controller ports
+
+- Keep one shared simulator, path sampler, allocator, timing contract,
+  disturbance distribution, and evaluator for both learned controllers.
+- Restore the proven Blind_PPO scheduler contract: 170 observations, piecewise
+  gain mapping around `(26.0, 0.5, 4.4)`, gain box `Kp 10-50`, `Ki 0-1.5`,
+  `Kd 2.5-6`, box-relative rate limit `0.5/s`, unfiltered derivative behavior,
+  scheduler reward, and original PPO parameters.
+- Restore the proven 50 Hz EndToEnd_RL contract: 130 observations, one steering
+  action, `0.2 m` cross-track scaling, `0.1 m` tracking-cost scale, steering-rate
+  reward, small initial exploration, and original PPO parameters.
+- Controller-specific observation encodings and rewards are intentional because
+  the actions have different physical meanings. Neither controller receives
+  path preview, path identity, disturbance values, or hidden plant context.
+- Preserve the historical training defaults and checkpoint techniques:
+  scheduler `300k` decisions with validation selection; direct PPO `1M`
+  decisions with best training-rollout reward. Training processes are launched
+  independently and use one Torch thread by default.
+- The earlier `Kp 15-300` box and absolute rate limits remain provenance for the
+  fixed-PID calibration work but are superseded for the PPO scheduler.
+
+## 2026-08-22: Shared physical checkpoint selection and 150 ms delay
+
+- A validation audit showed that training-rollout reward selected a materially
+  worse direct-PPO checkpoint than physical validation. On the 20-scenario
+  diagnostic subset, the nominal direct model improved from `42.58 mm` to
+  `11.30 mm` failure-adjusted error when the final rather than reward-selected
+  checkpoint was used; the disturbed model improved from `6.41 mm` to
+  `5.84 mm`.
+- Both learned arms now select checkpoints on the same fixed 24-scenario
+  validation subset: maximize completion first, then minimize mean
+  failure-adjusted error. Rewards, observations, PPO parameters, and training
+  budgets remain architecture-specific.
+- The fixed and scheduled PID arms now both use the already selected `0.01 s`
+  derivative filter and kick-free initialization. The previous scheduler-only
+  unfiltered behavior caused roughly `510` steering-variation units per second
+  and `78-79%` wheel saturation in the validation noise condition.
+- Set the declared delay severity and disturbed-training delay range to
+  `0.15 s`. The prior `0.06 s` delay produced too little separation and did not
+  reproduce the delayed regime where the earlier scheduler showed promise.
+- These changes alter the control dynamics, training distribution, and model
+  selection rule. Every checkpoint under `artifacts/models/native_ports` is
+  therefore superseded development evidence and must not be used in the final
+  comparison. Protocol-v2 training writes to `artifacts/models/protocol_v2`.
+- The fixed robust PID calibrated at `0.06 s` completed only `4/12` transient
+  combined checkpoint scenarios at `0.15 s`, so it is superseded. Instead of
+  reopening differential evolution, adopt `(18.0, 0.5, 4.4)` from the earlier
+  Blind_PPO 150 ms Kp sweep. A deliberately small confirmation at
+  `Kp = 18, 22, 26` completed every transient case; `Kp=18` had the lowest
+  failure-adjusted error (`17.32 mm`, versus `23.99 mm` and `34.62 mm`). It also
+  completed all 12 nominal checkpoint cases at `1.59 mm` failure-adjusted
+  error. This is a pragmatic prior-informed baseline, not a new optimum claim.
+- The bounds in `calibration.json` now only contain the two fixed baselines.
+  PPO scheduler mapping uses the separate tracked `blind_ppo.json` contract.

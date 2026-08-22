@@ -23,15 +23,22 @@ def scenario(**overrides):
     return Scenario(**values)
 
 
-@pytest.mark.parametrize("mode,shape", [("fixed", (3,)), ("scheduled", (3,)), ("direct", (1,))])
-def test_modes_share_observation_contract(mode, shape):
+@pytest.mark.parametrize(
+    "mode,action_shape,observation_shape",
+    [
+        ("fixed", (3,), (170,)),
+        ("scheduled", (3,), (170,)),
+        ("direct", (1,), (130,)),
+    ],
+)
+def test_modes_use_native_controller_contracts(mode, action_shape, observation_shape):
     kwargs = {"fixed_gains": CALIBRATION.nominal} if mode == "fixed" else {}
     env = PathFollowingEnv(mode=mode, training=False, calibration=CALIBRATION, **kwargs)
     try:
         observation, _ = env.reset(seed=1, options={**scenario().to_options(), "max_episode_steps": 1})
-        assert observation.shape == (170,)
-        assert env.action_space.shape == shape
-        _, _, _, truncated, info = env.step(np.zeros(shape, dtype=np.float32))
+        assert observation.shape == observation_shape
+        assert env.action_space.shape == action_shape
+        _, _, _, truncated, info = env.step(np.zeros(action_shape, dtype=np.float32))
         assert truncated
         assert "failure_adjusted_error_m" in info["episode_metrics"]
     finally:
@@ -56,8 +63,46 @@ def test_scheduler_uses_absolute_per_gain_rate_limits():
         env.close()
 
 
+def test_scheduler_default_rate_limit_matches_blind_ppo_box_rate():
+    env = PathFollowingEnv(mode="scheduled", training=False, calibration=CALIBRATION)
+    try:
+        env.reset(seed=1, options={**scenario().to_options(), "max_episode_steps": 1})
+        initial = env.applied_gains.copy()
+        env.step(np.ones(3, dtype=np.float32))
+        box_width = CALIBRATION.upper.as_array() - CALIBRATION.lower.as_array()
+        expected = initial + 0.5 * box_width * env.control_dt
+        np.testing.assert_allclose(env.applied_gains, expected)
+    finally:
+        env.close()
+
+
+def test_scheduler_uses_shared_filtered_pid_contract_by_default():
+    fixed = PathFollowingEnv(
+        mode="fixed",
+        training=False,
+        calibration=CALIBRATION,
+        fixed_gains=CALIBRATION.nominal,
+    )
+    scheduled = PathFollowingEnv(mode="scheduled", training=False, calibration=CALIBRATION)
+    try:
+        fixed.reset(seed=1, options={**scenario().to_options(), "max_episode_steps": 1})
+        scheduled.reset(seed=1, options={**scenario().to_options(), "max_episode_steps": 1})
+        assert fixed.steer_pid.derivative_filter_tau == pytest.approx(0.01)
+        assert scheduled.steer_pid.derivative_filter_tau == pytest.approx(0.01)
+        assert not fixed.steer_pid.legacy_derivative_kick
+        assert not scheduled.steer_pid.legacy_derivative_kick
+    finally:
+        fixed.close()
+        scheduled.close()
+
+
 def test_fixed_and_equivalent_scheduler_replay_exactly():
-    fixed = PathFollowingEnv(mode="fixed", training=False, calibration=CALIBRATION, fixed_gains=CALIBRATION.nominal)
+    fixed = PathFollowingEnv(
+        mode="fixed",
+        training=False,
+        calibration=CALIBRATION,
+        fixed_gains=CALIBRATION.nominal,
+    )
     scheduled = PathFollowingEnv(mode="scheduled", training=False, calibration=CALIBRATION)
     options = {**scenario().to_options(), "max_episode_steps": 8}
     try:
@@ -113,7 +158,12 @@ def test_noise_and_delay_replay_match_between_pid_adapters():
         initial_delay_s=0.006,
         initial_noise_std_m=0.001,
     )
-    fixed = PathFollowingEnv(mode="fixed", training=False, calibration=CALIBRATION, fixed_gains=CALIBRATION.nominal)
+    fixed = PathFollowingEnv(
+        mode="fixed",
+        training=False,
+        calibration=CALIBRATION,
+        fixed_gains=CALIBRATION.nominal,
+    )
     scheduled = PathFollowingEnv(mode="scheduled", training=False, calibration=CALIBRATION)
     options = {**paired.to_options(), "max_episode_steps": 5}
     try:

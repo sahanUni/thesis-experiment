@@ -17,6 +17,7 @@ class PIDController:
         setpoint=0.0,
         output_limits=(None, None),
         derivative_filter_tau=0.02,
+        legacy_derivative_kick=False,
     ):
         self.kp = kp
         self.ki = ki
@@ -24,6 +25,7 @@ class PIDController:
         self.setpoint = setpoint
         self.output_limits = output_limits
         self.derivative_filter_tau = float(derivative_filter_tau)
+        self.legacy_derivative_kick = bool(legacy_derivative_kick)
 
         self._prev_error = None
         self._derivative = 0.0
@@ -35,8 +37,10 @@ class PIDController:
         self._integral = 0.0
 
     def _filtered_derivative(self, error, dt):
-        if self._prev_error is None or dt <= 0:
+        if dt <= 0:
             raw = 0.0
+        elif self._prev_error is None:
+            raw = error / dt if self.legacy_derivative_kick else 0.0
         else:
             raw = (error - self._prev_error) / dt
         tau = max(self.derivative_filter_tau, 0.0)

@@ -46,15 +46,22 @@ class GainCalibration:
 
     def map_action(self, action: np.ndarray) -> PIDGains:
         action = np.asarray(action, dtype=np.float64).reshape(3)
-        unit = (np.clip(action, -1.0, 1.0) + 1.0) / 2.0
-        mapped = self.lower.as_array() + unit * (self.upper.as_array() - self.lower.as_array())
+        action = np.clip(action, -1.0, 1.0)
+        nominal = self.nominal.as_array()
+        below = nominal + action * (nominal - self.lower.as_array())
+        above = nominal + action * (self.upper.as_array() - nominal)
+        mapped = np.where(action < 0.0, below, above)
         return PIDGains.from_iterable(mapped)
 
     def action_for(self, gains: PIDGains) -> np.ndarray:
-        unit = (gains.as_array() - self.lower.as_array()) / (
-            self.upper.as_array() - self.lower.as_array()
-        )
-        return np.clip(2.0 * unit - 1.0, -1.0, 1.0).astype(np.float32)
+        values = gains.as_array()
+        nominal = self.nominal.as_array()
+        below_span = nominal - self.lower.as_array()
+        above_span = self.upper.as_array() - nominal
+        below = (values - nominal) / np.maximum(below_span, 1e-12)
+        above = (values - nominal) / np.maximum(above_span, 1e-12)
+        action = np.where(values < nominal, below, above)
+        return np.clip(action, -1.0, 1.0).astype(np.float32)
 
     def save(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)

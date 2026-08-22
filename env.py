@@ -13,6 +13,7 @@ import mujoco
 import numpy as np
 
 import config
+from controller_profiles import profile_for
 from calibration import GainCalibration, PIDGains
 from core import paths
 from core.dynamics import (
@@ -30,29 +31,10 @@ from metrics import failure_adjusted_error
 
 
 MODES = {"fixed", "scheduled", "direct"}
-FRAME_FIELDS = (
-    "e_ct",
-    "e_ct_rate",
-    "e_ct_integral",
-    "e_theta",
-    "speed",
-    "yaw_rate",
-    "omega_requested",
-    "omega_applied",
-    "v_applied",
-    "previous_action_0",
-    "previous_action_1",
-    "previous_action_2",
-    "v_target",
-    "wheel_utilization",
-    "steer_saturated",
-    "allocation_limited",
-    "steer_integrator_hold",
-)
 
 
-def tracking_cost_of(distances: Any) -> float:
-    squared = (np.asarray(distances, dtype=np.float64) / config.TRACKING_SCALE_M) ** 2
+def tracking_cost_of(distances: Any, scale_m: float) -> float:
+    squared = (np.asarray(distances, dtype=np.float64) / scale_m) ** 2
     return float(np.mean(squared / (1.0 + squared)))
 
 
@@ -70,8 +52,9 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
         calibration: GainCalibration | None = None,
         fixed_gains: PIDGains | None = None,
         path_specs: tuple[dict[str, Any], ...] | None = None,
-        gain_rate_limit: tuple[float, float, float] = config.GAIN_RATE_LIMIT_PER_S,
-        derivative_filter_tau_s: float = config.CONFIG.derivative_filter_tau_s,
+        gain_rate_limit: tuple[float, float, float] | None = None,
+        derivative_filter_tau_s: float | None = None,
+        legacy_derivative_kick: bool | None = None,
         physics_trace: bool = False,
     ) -> None:
         super().__init__()
@@ -80,29 +63,39 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
         if mode == "fixed" and fixed_gains is None:
             raise ValueError("fixed mode requires fixed_gains")
         self.mode = mode
+        self.profile = profile_for(mode)
         self.training = bool(training)
         self.disturbance_training = bool(disturbance_training)
         self.calibration = calibration or GainCalibration.development_default()
         self.fixed_gains = fixed_gains
         self.path_specs = tuple(path_specs or config.PATH_SPLITS["train"])
+        if gain_rate_limit is None:
+            gain_rate_limit = tuple(
+                0.5 * (self.calibration.upper.as_array() - self.calibration.lower.as_array())
+            )
         self.gain_rate_limit = np.asarray(gain_rate_limit, dtype=np.float64)
+        if derivative_filter_tau_s is None:
+            derivative_filter_tau_s = config.CONFIG.derivative_filter_tau_s
         self.derivative_filter_tau_s = float(derivative_filter_tau_s)
+        self.legacy_derivative_kick = (
+            False if legacy_derivative_kick is None else bool(legacy_derivative_kick)
+        )
         self.physics_trace = bool(physics_trace)
         if self.gain_rate_limit.shape != (3,) or np.any(self.gain_rate_limit <= 0):
             raise ValueError("gain_rate_limit must contain three positive values")
         if self.derivative_filter_tau_s < 0:
             raise ValueError("derivative_filter_tau_s must be non-negative")
 
-        action_size = 1 if mode == "direct" else 3
+        action_size = 3 if mode == "fixed" else self.profile.action_size
         self.action_space = spaces.Box(-1.0, 1.0, shape=(action_size,), dtype=np.float32)
         self.observation_space = spaces.Box(
             -1.0,
             1.0,
-            shape=(len(FRAME_FIELDS) * config.CONFIG.history_length,),
+            shape=(self.profile.observation_size,),
             dtype=np.float32,
         )
         self.render_mode = None
-        self._history: deque[np.ndarray] = deque(maxlen=config.CONFIG.history_length)
+        self._history: deque[np.ndarray] = deque(maxlen=self.profile.history_length)
         self._needs_reset = True
 
     @property
@@ -194,6 +187,7 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
             setpoint=0.0,
             output_limits=(-1.0, 1.0),
             derivative_filter_tau=self.derivative_filter_tau_s,
+            legacy_derivative_kick=self.legacy_derivative_kick,
         )
         self.speed_pid = ConditionalPIDController(
             kp=config.SPEED_PID_GAINS[0],
@@ -215,7 +209,13 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
         self.elapsed_steps = 0
         self.physics_steps = 0
         self.time_s = 0.0
-        self.previous_action = np.zeros(3, dtype=np.float64)
+        self.previous_action = (
+            self.calibration.action_for(initial_gains).astype(np.float64)
+            if self.mode != "direct"
+            else np.zeros(3, dtype=np.float64)
+        )
+        self._previous_direct_action = 0.0
+        self._direct_action = 0.0
         self.target_gains = initial_gains.as_array()
         self.applied_gains = initial_gains.as_array()
         self._error_integral = 0.0
@@ -240,7 +240,7 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
         zero = self._zero_control()
         frame = self._frame(state, measured, 0.0, zero)
         self._history.clear()
-        for _ in range(config.CONFIG.history_length):
+        for _ in range(self.profile.history_length):
             self._history.append(frame.copy())
         return self._observation(), self._base_info(state)
 
@@ -318,7 +318,8 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
 
     def _set_controller_action(self, action: np.ndarray) -> None:
         if self.mode == "direct":
-            self.previous_action[:] = (float(action[0]), 0.0, 0.0)
+            self._previous_direct_action = self._direct_action
+            self._direct_action = float(action[0])
             return
         if self.mode == "fixed":
             gains = self.fixed_gains
@@ -341,31 +342,53 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
             config.INTEGRAL_SCALE_MS,
         ))
         if self.mode == "direct":
-            return float(self.previous_action[0])
+            return self._direct_action
         return float(self.steer_pid.update(measured_e_ct, DT))
 
     def _frame(self, state: TrackState, measured: float, rate: float, control: dict[str, Any]) -> np.ndarray:
         yaw = yaw_of(self.data.qpos[3:7])
-        values = np.asarray(
-            (
-                measured / config.E_CT_SCALE_M,
-                rate / config.E_CT_RATE_SCALE_MPS,
-                self._error_integral / config.INTEGRAL_SCALE_MS,
-                state.e_theta / np.pi,
-                forward_speed(self.data, yaw) / config.SPEED_SCALE_MPS,
-                float(self.data.qvel[5]) / config.YAW_RATE_SCALE_RADPS,
-                control["omega_requested"],
-                control["omega_applied"],
-                control["v_applied"],
-                *self.previous_action,
-                self.v_target / max(config.CONFIG.target_speeds),
-                control["wheel_utilization"],
-                float(control["steer_saturated"]),
-                float(control["allocation_limited"]),
-                float(control["steer_integrator_hold"]),
-            ),
-            dtype=np.float32,
+        common = (
+            rate / config.E_CT_RATE_SCALE_MPS,
+            state.e_theta / np.pi,
+            forward_speed(self.data, yaw) / config.SPEED_SCALE_MPS,
+            float(self.data.qvel[5]) / config.YAW_RATE_SCALE_RADPS,
         )
+        if self.mode == "direct":
+            values = np.asarray(
+                (
+                    measured / 0.2,
+                    common[0],
+                    self._error_integral / config.INTEGRAL_SCALE_MS,
+                    *common[1:],
+                    self._previous_direct_action,
+                    control["omega_applied"],
+                    control["v_applied"],
+                    self.v_target / max(config.CONFIG.target_speeds),
+                    control["wheel_utilization"],
+                    float(control["steer_saturated"]),
+                    float(control["allocation_limited"]),
+                ),
+                dtype=np.float32,
+            )
+        else:
+            values = np.asarray(
+                (
+                    measured / config.E_CT_SCALE_M,
+                    common[0],
+                    self.steer_pid._integral / config.INTEGRAL_SCALE_MS,
+                    *common[1:],
+                    control["omega_requested"],
+                    control["omega_applied"],
+                    control["v_applied"],
+                    *self.previous_action,
+                    self.v_target / max(config.CONFIG.target_speeds),
+                    control["wheel_utilization"],
+                    float(control["steer_saturated"]),
+                    float(control["allocation_limited"]),
+                    float(control["steer_integrator_hold"]),
+                ),
+                dtype=np.float32,
+            )
         return np.clip(values, -1.0, 1.0)
 
     def _observation(self) -> np.ndarray:
@@ -390,6 +413,7 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
         if action.shape != (expected,) or not np.isfinite(action).all():
             raise ValueError(f"action must contain {expected} finite value(s)")
         action = np.clip(action, -1.0, 1.0)
+        previous_policy_action = self.previous_action.copy()
         self._set_controller_action(action)
         start = self._state().progress_m
         distances: list[float] = []
@@ -481,9 +505,24 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
         progress = max(0.0, state.progress_m - start)
         steer_delta = self._last_omega_requested - previous_omega
         reward_progress = config.PROGRESS_WEIGHT * progress
-        reward_tracking = -config.TRACKING_WEIGHT * tracking_cost_of(distances)
-        reward_steer = -config.STEER_VARIATION_WEIGHT * steer_delta**2
-        reward_terminal = config.FINISH_BONUS if finished else -config.FAILURE_PENALTY if (terminated or truncated) else 0.0
+        reward_tracking = -self.profile.tracking_weight * tracking_cost_of(
+            distances, self.profile.tracking_scale_m
+        )
+        if self.mode == "direct":
+            reward_steer = -self.profile.action_smoothness_weight * (
+                self._direct_action - self._previous_direct_action
+            ) ** 2
+        else:
+            reward_steer = -self.profile.action_smoothness_weight * float(
+                np.sum((self.previous_action - previous_policy_action) ** 2)
+            )
+        reward_terminal = (
+            self.profile.finish_bonus
+            if finished
+            else -self.profile.failure_penalty
+            if (terminated or truncated)
+            else 0.0
+        )
         reward = reward_progress + reward_tracking + reward_steer + reward_terminal
 
         info = self._base_info(state)

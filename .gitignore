@@ -12,6 +12,7 @@ artifacts/*
 !artifacts/probes/
 artifacts/calibration/*
 !artifacts/calibration/calibration.json
+!artifacts/calibration/blind_ppo.json
 !artifacts/calibration/per_path_gains.json
 !artifacts/calibration/nominal_validation.csv
 !artifacts/calibration/robust_validation.csv

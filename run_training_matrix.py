@@ -13,16 +13,23 @@ import config
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--phase", choices=("development", "final"), default="development")
-    parser.add_argument("--timesteps", type=int, required=True)
-    parser.add_argument("--eval-freq", type=int, default=100_000)
-    parser.add_argument("--calibration", default=str(config.ROOT / "artifacts" / "calibration" / "calibration.json"))
+    parser.add_argument("--scheduler-timesteps", type=int, default=300_000)
+    parser.add_argument("--direct-timesteps", type=int, default=1_000_000)
+    parser.add_argument("--scheduler-eval-freq", type=int, default=25_000)
+    parser.add_argument("--direct-eval-freq", type=int, default=100_000)
+    parser.add_argument("--scheduler-calibration", default=str(config.ROOT / "artifacts" / "calibration" / "blind_ppo.json"))
     parser.add_argument("--validation-manifest", default=str(config.ROOT / "manifests" / "validation.json"))
-    parser.add_argument("--output", default=str(config.ROOT / "artifacts" / "models"))
+    parser.add_argument("--output", default=str(config.ROOT / "artifacts" / "models" / "protocol_v2"))
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args()
-    if args.timesteps <= 0:
-        parser.error("timesteps must be positive")
-    calibration = Path(args.calibration).resolve()
+    if min(
+        args.scheduler_timesteps,
+        args.direct_timesteps,
+        args.scheduler_eval_freq,
+        args.direct_eval_freq,
+    ) <= 0:
+        parser.error("training budgets and evaluation frequencies must be positive")
+    calibration = Path(args.scheduler_calibration).resolve()
     validation = Path(args.validation_manifest).resolve()
     if not calibration.is_file() or not validation.is_file():
         parser.error("calibration and validation manifest must already exist")
@@ -47,17 +54,22 @@ def main() -> None:
                         "--seed",
                         str(seed),
                         "--timesteps",
-                        str(args.timesteps),
-                        "--eval-freq",
-                        str(args.eval_freq),
-                        "--calibration",
-                        str(calibration),
+                        str(args.scheduler_timesteps if mode == "scheduled" else args.direct_timesteps),
                         "--validation-manifest",
                         str(validation),
                         "--output",
                         str(Path(args.output).resolve()),
+                        "--eval-freq",
+                        str(args.scheduler_eval_freq if mode == "scheduled" else args.direct_eval_freq),
                     ]
                 )
+                if mode == "scheduled":
+                    commands[-1].extend(
+                        [
+                            "--calibration",
+                            str(calibration),
+                        ]
+                    )
     for command in commands:
         print(subprocess.list2cmdline(command))
         if args.execute:

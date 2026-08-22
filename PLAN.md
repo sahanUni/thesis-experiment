@@ -129,8 +129,8 @@ The primary experiment is feedback-only. Neither PPO receives path identity,
 future waypoints, curvature preview, hidden delay/noise values, or disturbance
 timing.
 
-Both PPO methods receive the same normalized 200 ms causal history of common
-measurements:
+Both PPO methods receive the same causal feedback information over a 200 ms
+history, encoded using their proven native controller contracts:
 
 - measured cross-track error and its filtered/rate representation;
 - accumulated cross-track error;
@@ -140,10 +140,10 @@ measurements:
 - previous requested and applied steering quantities;
 - wheel utilization, saturation, and allocation-limited flags.
 
-Controller-specific internal state may be appended where it has no common
-meaning. The scheduler may observe previous normalized gain actions and PID
-integrator state; direct PPO may observe its previous steering action. Every
-difference must be listed in the run manifest.
+The scheduler uses the Blind_PPO 170-value representation, including previous
+normalized gain actions and PID internal state. Direct PPO uses the EndToEnd_RL
+130-value representation, including previous steering but excluding redundant
+gain channels and PID-only flags. Every difference is recorded with the run.
 
 ## Path Design
 
@@ -269,18 +269,18 @@ particular controller.
 
 - Use one declared development seed.
 - Debug only on training and validation manifests.
-- Establish environment correctness, reward balance, stable learning,
-  checkpoint selection, and a sufficient shared training budget.
-- Use learning curves to choose one final PPO decision-step budget that is the
-  same for both learned architectures and both training regimes.
+- Establish environment correctness, reward balance, and stable learning.
+- Retain the proven architecture-specific training budgets and techniques.
+- Select both learned architectures on the same frozen physical validation
+  subset: completion rate first, then failure-adjusted error.
 
 ### Final phase
 
 - Use five independent, predeclared training seeds for each of the four PPO
   arms, for 20 final training runs.
 - Start every final run from scratch with frozen code and configuration.
-- Select checkpoints using the same deterministic validation protocol and
-  evaluation frequency measured in simulated time.
+- Select checkpoints using the shared frozen physical validation rule;
+  controller-specific rewards and training budgets remain unchanged.
 - Evaluate deterministic policy actions.
 - Report every seed. No seed may be dropped because of poor performance unless
   a predeclared infrastructure-failure rule applies and the entire run is
@@ -288,10 +288,11 @@ particular controller.
 
 ### Budget fairness
 
-- Equal 50 Hz PPO decision count and equal simulated seconds for all PPO arms.
+- Both learned controllers act at 50 Hz and train on the same declared scenario
+  distribution; training budgets may differ and are reported.
 - Same policy network class and capacity unless a difference is required by
   action/observation dimensions and documented.
-- Same hyperparameter-search budget per learned architecture.
+- Use the frozen, previously validated hyperparameters for each architecture.
 - Reward terms that accumulate over time are scaled per simulated second.
 - Record physics ticks, PPO decisions, gradient updates, wall time, CPU/GPU,
   inference latency, and model parameter count.

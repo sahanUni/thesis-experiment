@@ -61,6 +61,10 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--calibration", default=str(config.ROOT / "artifacts" / "calibration" / "calibration.json"))
+    parser.add_argument(
+        "--scheduler-calibration",
+        default=str(config.ROOT / "artifacts" / "calibration" / "blind_ppo.json"),
+    )
     parser.add_argument("--model", action="append", default=[], metavar="ARM:SEED=PATH")
     parser.add_argument("--models-root", help="Require and load the complete four-arm, five-seed matrix")
     parser.add_argument("--per-path-gains")
@@ -71,8 +75,10 @@ def main() -> None:
 
     manifest_path = Path(args.manifest).resolve()
     calibration_path = Path(args.calibration).resolve()
+    scheduler_calibration_path = Path(args.scheduler_calibration).resolve()
     manifest = ScenarioManifest.load(manifest_path)
     calibration = GainCalibration.load(calibration_path)
+    scheduler_calibration = GainCalibration.load(scheduler_calibration_path)
     model_entries = list(args.model)
     if args.models_root:
         root = Path(args.models_root).resolve()
@@ -92,15 +98,17 @@ def main() -> None:
     output.mkdir(parents=True, exist_ok=True)
     shutil.copy2(manifest_path, output / "scenario_manifest.json")
     shutil.copy2(calibration_path, output / "calibration.json")
+    shutil.copy2(scheduler_calibration_path, output / "scheduler_calibration.json")
 
-    controllers: list[tuple[str, int | None, str, PIDGains | None, Any]] = [
-        ("pid_global_nominal", None, "fixed", calibration.nominal, None),
-        ("pid_global_robust", None, "fixed", calibration.robust, None),
+    controllers: list[tuple[str, int | None, str, GainCalibration, PIDGains | None, Any]] = [
+        ("pid_global_nominal", None, "fixed", calibration, calibration.nominal, None),
+        ("pid_global_robust", None, "fixed", calibration, calibration.robust, None),
     ]
     for arm, seed, path in models:
         mode = "scheduled" if arm.startswith("ppo_scheduler_") else "direct"
         model = PPO.load(path)
-        controllers.append((arm, seed, mode, None, model))
+        controller_calibration = scheduler_calibration if mode == "scheduled" else calibration
+        controllers.append((arm, seed, mode, controller_calibration, None, model))
 
     per_path: dict[str, Any] | None = None
     if args.per_path_gains:
@@ -109,11 +117,11 @@ def main() -> None:
     rows: list[dict[str, Any]] = []
     expected_primary: set[tuple[str, str, str]] = set()
     traces_dir = output / "traces"
-    for controller, training_seed, mode, gains, model in controllers:
+    for controller, training_seed, mode, controller_calibration, gains, model in controllers:
         env = PathFollowingEnv(
             mode=mode,
             training=False,
-            calibration=calibration,
+            calibration=controller_calibration,
             fixed_gains=gains,
             physics_trace=args.save_traces,
         )
@@ -186,6 +194,8 @@ def main() -> None:
         "manifest_sha256": manifest.digest(),
         "calibration": str(calibration_path),
         "calibration_sha256": sha256(calibration_path),
+        "scheduler_calibration": str(scheduler_calibration_path),
+        "scheduler_calibration_sha256": sha256(scheduler_calibration_path),
         "controllers": [
             {
                 "arm": arm,
@@ -194,10 +204,16 @@ def main() -> None:
                 "model_sha256": sha256(path),
                 "parameter_count": sum(parameter.numel() for parameter in model.policy.parameters()),
             }
-            for (arm, seed, path), model in zip(models, [item[4] for item in controllers[2:]])
+            for (arm, seed, path), model in zip(models, [item[5] for item in controllers[2:]])
         ],
         "config": config.CONFIG.to_dict(),
-        "gain_rate_limit_per_s": config.GAIN_RATE_LIMIT_PER_S,
+        "scheduler_gain_rate_limit_per_s": (
+            0.5
+            * (
+                scheduler_calibration.upper.as_array()
+                - scheduler_calibration.lower.as_array()
+            )
+        ).tolist(),
         "save_traces": args.save_traces,
         "packages": {name: version(name) for name in ("numpy", "mujoco", "gymnasium", "stable-baselines3", "torch")},
     }
