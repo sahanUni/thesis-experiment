@@ -141,3 +141,71 @@ criterion. No training or final experiment had been run.
   error. This is a pragmatic prior-informed baseline, not a new optimum claim.
 - The bounds in `calibration.json` now only contain the two fixed baselines.
   PPO scheduler mapping uses the separate tracked `blind_ppo.json` contract.
+
+## 2026-08-22: Scheduler reward scale, disturbance sampler, and gain box floor
+
+A single-seed protocol-v2 audit showed disturbance training helping the direct
+arm but hurting the scheduler: transient combined failure-adjusted error moved
+from `11.89 mm` (nominal-trained) to `19.86 mm` (disturbance-trained), while
+nominal error moved the other way, from `1.96 mm` to `1.39 mm`. Diagnosis and
+the three resulting changes are recorded here. No held-out result was opened.
+
+### Diagnosed cause: a saturated scheduler tracking term
+
+The tracking reward is `x^2/(1+x^2)` with `x = distance / tracking_scale_m`.
+The native Blind_PPO scheduler scale is `0.005 m`. Measured gradient of that
+term is `130 /m` at `3 mm` error but `1.2 /m` at `34 mm`. Under the `0.15 s`
+delay the plant tracks at `22-34 mm`, so the term sat pinned at `0.97-0.98`
+and the scheduler's disturbed episodes contributed almost no tracking
+gradient; `PROGRESS_WEIGHT = 5.0` and the terminal bonus dominated instead.
+
+The remaining usable gradient came from the near-nominal episodes, and a fixed
+gain sweep on the 12 transient combined validation scenarios shows those pull
+`Kp` the wrong way. Nominal error falls monotonically in `Kp` (`2.79 mm` at
+`Kp=6` to `1.25 mm` at `Kp=50`) while transient combined error rises steeply
+(`9.38 mm` at `Kp=8`, `17.32 mm` at `Kp=18`, `34.62 mm` at `Kp=26`, with
+completion loss from `Kp=32`). The disturbance-trained scheduler settled at
+`Kp ~21-27` and the nominal-trained one at `Kp ~11-13`.
+
+The direct arm uses a `0.1 m` scale, so its `16-44 mm` errors stayed inside the
+responsive part of the same curve, and its disturbance training worked. Same
+plant, same sampler, same severities, opposite outcome. That isolates the
+tracking scale rather than the disturbance distribution as the primary cause.
+
+### Changes
+
+- Set the scheduler `tracking_scale_m` from `0.005` to `0.02`. At `0.02` both
+  the nominal operating point (`3 mm`) and the disturbed one (`25 mm`) keep a
+  live gradient. This supersedes the native Blind_PPO reward scale; every other
+  scheduler reward constant is unchanged.
+- Replace the disturbance-training sampler. It now mirrors the four evaluation
+  conditions with weights `(nominal 0.10, delay 0.30, noise 0.20, combined
+  0.40)`, takes the stationary or transient form with equal probability, draws
+  the declared evaluation severity outright half the time, and steps delay and
+  noise together in the combined transient exactly as the evaluation manifest
+  builds them. Event times are sampled as a fraction of the episode's own ideal
+  duration and resolved in `reset`, spanning `1.0 s` to `0.8 x` ideal duration.
+  The previous sampler drew delay uniformly and then zeroed it whenever it
+  added an event, giving a mean sampled delay of `0.0366 s` against a `0.15 s`
+  evaluation severity, never co-occurring delay and noise steps, and a
+  hardcoded `6-12 s` event window derived from an assumed `20 s` episode when
+  actual training episodes run `9-53 s`. The replacement gives a mean applied
+  delay of `0.0787 s` with `34.8%` of episodes at the declared severity.
+- Lower the scheduler gain box floor from `Kp 10` to `Kp 5`. The nominal-trained
+  scheduler pinned itself at `10.00`, the box floor, and the fixed sweep puts
+  the transient combined optimum near `Kp 8`, below the old floor. The box came
+  from the Blind_PPO port under the superseded `0.06 s` delay. The box-relative
+  rate limit follows the widened box, from `20.0` to `22.5` per second for `Kp`.
+
+### Open item recorded before the changes
+
+The robust fixed PID `(18.0, 0.5, 4.4)` was selected from a three-point
+confirmation at `Kp = 18, 22, 26`, and `18` was the lowest value tested. The
+sweep above reaches `9.38 mm` at `Kp=8` against its `17.32 mm`, so the robust
+baseline is under-tuned and every learned advantage over it is inflated.
+Re-tune it downward before the freeze. Related: the nominal-trained scheduler's
+`11.89 mm` is not distinguishable from a static `Kp=13` PID at `11.80 mm`, so
+no adaptation claim is supported by the current evidence.
+
+All four protocol-v2 seed-11 checkpoints predate these changes and are
+superseded development evidence.

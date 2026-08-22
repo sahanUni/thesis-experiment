@@ -40,3 +40,12 @@ def test_disturbance_protocol_uses_150ms_delay():
 
     assert config.CONFIG.delay_severity_s == 0.15
     assert config.TRAIN_DELAY_RANGE_S == (0.0, 0.15)
+
+
+def test_scheduler_tracking_scale_still_responds_at_the_delayed_operating_point():
+    profile = controller_profiles.profile_for("scheduled")
+    # Under the 0.15 s delay the plant tracks at roughly 0.02-0.035 m. The
+    # saturating tracking term must still have gradient there instead of
+    # sitting pinned at its maximum, which is what stalled disturbed training.
+    x = 0.030 / profile.tracking_scale_m
+    assert x**2 / (1.0 + x**2) < 0.75

@@ -115,24 +115,78 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
             "events": [],
         }
         if self.training and self.disturbance_training:
-            episode["initial_delay_s"] = float(self.np_random.uniform(*config.TRAIN_DELAY_RANGE_S))
-            episode["initial_noise_std_m"] = float(self.np_random.uniform(*config.TRAIN_NOISE_RANGE_M))
-            if self.np_random.random() < 0.5:
-                start = float(self.np_random.uniform(0.3, 0.6) * 20.0)
-                episode["initial_delay_s"] = 0.0
-                episode["events"].append(
-                    {"kind": "delay_step", "start_s": start, "value": float(self.np_random.uniform(*config.TRAIN_DELAY_RANGE_S))}
-                )
-            if self.np_random.random() < 0.5:
-                start = float(self.np_random.uniform(0.3, 0.6) * 20.0)
-                episode["initial_noise_std_m"] = 0.0
-                episode["events"].append(
-                    {"kind": "noise_step", "start_s": start, "value": float(self.np_random.uniform(*config.TRAIN_NOISE_RANGE_M))}
-                )
+            self._sample_disturbance(episode)
         for key in episode:
             if key in options:
                 episode[key] = deepcopy(options[key])
         return episode
+
+    def _sample_severity(self, train_range: tuple[float, float], declared: float) -> float:
+        """Draw the declared evaluation severity often enough to train for it."""
+        if self.np_random.random() < config.DISTURBANCE_DECLARED_SEVERITY_PROB:
+            return float(declared)
+        return float(self.np_random.uniform(*train_range))
+
+    def _sample_disturbance(self, episode: dict[str, Any]) -> None:
+        """Mirror the evaluation condition grid with randomized severity and timing.
+
+        Event times are stored as a fraction and resolved against the episode's
+        own ideal duration in reset(), because training durations span 9 s to
+        53 s and a hardcoded window cannot land mid-episode on all of them. In
+        the combined transient both channels step together, exactly as the
+        evaluation manifest builds them.
+        """
+        index = int(
+            self.np_random.choice(
+                len(config.DISTURBANCE_CONDITIONS),
+                p=config.DISTURBANCE_CONDITION_WEIGHTS,
+            )
+        )
+        condition = config.DISTURBANCE_CONDITIONS[index]
+        if condition == "nominal":
+            return
+        wants_delay = condition in {"delay", "combined"}
+        wants_noise = condition in {"noise", "combined"}
+        delay = self._sample_severity(config.TRAIN_DELAY_RANGE_S, config.CONFIG.delay_severity_s)
+        noise = self._sample_severity(config.TRAIN_NOISE_RANGE_M, config.CONFIG.noise_severity_m)
+        if self.np_random.random() >= config.DISTURBANCE_TRANSIENT_PROB:
+            episode["initial_delay_s"] = delay if wants_delay else 0.0
+            episode["initial_noise_std_m"] = noise if wants_noise else 0.0
+            return
+        start_fraction = float(self.np_random.random())
+        if wants_delay:
+            episode["events"].append(
+                {"kind": "delay_step", "start_fraction": start_fraction, "value": delay}
+            )
+        if wants_noise:
+            episode["events"].append(
+                {"kind": "noise_step", "start_fraction": start_fraction, "value": noise}
+            )
+
+    def _resolve_events(
+        self,
+        events: list[dict[str, Any]],
+        ideal_time_s: float,
+    ) -> list[dict[str, Any]]:
+        """Convert sampled fractional event times to absolute simulation times.
+
+        Serialized evaluation scenarios always carry an absolute start_s and
+        pass through untouched.
+        """
+        latest = max(
+            config.EVENT_START_MIN_S,
+            config.EVENT_START_IDEAL_FRACTION * ideal_time_s,
+        )
+        resolved: list[dict[str, Any]] = []
+        for event in events:
+            event = dict(event)
+            if "start_fraction" in event:
+                fraction = float(event.pop("start_fraction"))
+                event["start_s"] = config.EVENT_START_MIN_S + fraction * (
+                    latest - config.EVENT_START_MIN_S
+                )
+            resolved.append(event)
+        return resolved
 
     def reset(
         self,
@@ -148,7 +202,8 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
         self.path_key = str(self.path_spec["kind"])
         self.v_target = float(episode["v_target"])
         self.noise_seed = int(episode["noise_seed"])
-        self.events = deepcopy(list(episode["events"]))
+        self.ideal_time_s = float(self.path["length"]) / self.v_target
+        self.events = self._resolve_events(deepcopy(list(episode["events"])), self.ideal_time_s)
         self._validate_events(self.events)
         self.actuator_delay_s = max(0.0, float(episode["initial_delay_s"]))
         self.sensor_noise_m = max(0.0, float(episode["initial_noise_std_m"]))
@@ -198,8 +253,9 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
             derivative_filter_tau=self.derivative_filter_tau_s,
         )
 
-        ideal_time = float(self.path["length"]) / self.v_target
-        self.max_time_s = config.CONFIG.max_time_factor * ideal_time + config.CONFIG.max_time_margin_s
+        self.max_time_s = (
+            config.CONFIG.max_time_factor * self.ideal_time_s + config.CONFIG.max_time_margin_s
+        )
         self.max_episode_steps = int(math.ceil(self.max_time_s / self.control_dt))
         if options and "max_episode_steps" in options:
             self.max_episode_steps = int(options["max_episode_steps"])

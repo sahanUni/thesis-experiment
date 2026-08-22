@@ -58,6 +58,18 @@ PROGRESS_WEIGHT = 5.0
 TRAIN_DELAY_RANGE_S = (0.0, 0.15)
 TRAIN_NOISE_RANGE_M = (0.0, 0.0004)
 
+# Disturbance-training sampler. The training grid mirrors the four evaluation
+# conditions so a disturbed policy trains on the operating points it is scored
+# on, with randomized severity and event timing. The previous sampler drew
+# delay uniformly and then zeroed it whenever it added an event, so the mean
+# sampled delay was 0.037 s against a 0.15 s evaluation severity.
+DISTURBANCE_CONDITIONS = ("nominal", "delay", "noise", "combined")
+DISTURBANCE_CONDITION_WEIGHTS = (0.10, 0.30, 0.20, 0.40)
+DISTURBANCE_TRANSIENT_PROB = 0.5
+DISTURBANCE_DECLARED_SEVERITY_PROB = 0.5
+EVENT_START_MIN_S = 1.0
+EVENT_START_IDEAL_FRACTION = 0.8
+
 
 PATH_SPLITS: dict[str, tuple[dict[str, Any], ...]] = {
     "train": (

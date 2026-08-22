@@ -102,7 +102,13 @@ PROFILES = {
         action_size=3,
         default_timesteps=300_000,
         default_eval_freq=25_000,
-        tracking_scale_m=0.005,
+        # The native Blind_PPO 0.005 m scale saturates x^2/(1+x^2) above about
+        # 0.02 m. Under the 0.15 s delay the plant tracks at 0.02-0.035 m, so
+        # the tracking term was pinned at its maximum and its gradient fell
+        # roughly 100-fold, leaving progress and the terminal bonus to drive
+        # disturbed training. 0.02 m keeps both the nominal and the disturbed
+        # operating points inside the responsive part of the curve.
+        tracking_scale_m=0.02,
         tracking_weight=0.035,
         action_smoothness_weight=0.01,
         finish_bonus=20.0,

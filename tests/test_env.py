@@ -1,6 +1,8 @@
 import numpy as np
 import pytest
 
+import config
+
 from calibration import GainCalibration
 from core.dynamics import DT
 from env import PathFollowingEnv
@@ -210,5 +212,116 @@ def test_optional_trace_records_every_physics_step():
         env.reset(seed=5, options={**scenario().to_options(), "max_episode_steps": 1})
         env.step(np.zeros(1, dtype=np.float32))
         assert len(env.get_trace()) == env.physics_steps == 10
+    finally:
+        env.close()
+
+
+def disturbed_env():
+    return PathFollowingEnv(
+        mode="scheduled",
+        training=True,
+        disturbance_training=True,
+        calibration=CALIBRATION,
+    )
+
+
+def test_disturbed_sampler_reaches_the_declared_evaluation_severity():
+    env = disturbed_env()
+    try:
+        env.reset(seed=7)
+        delays = []
+        for _ in range(2000):
+            episode = env._sample_episode({})
+            steps = [float(e["value"]) for e in episode["events"] if e["kind"] == "delay_step"]
+            delays.append(max([float(episode["initial_delay_s"]), *steps]))
+    finally:
+        env.close()
+    delays = np.asarray(delays)
+    assert np.isclose(delays, config.CONFIG.delay_severity_s).mean() > 0.25
+    assert delays.mean() > 0.06
+
+
+def test_disturbed_sampler_covers_every_evaluation_condition():
+    env = disturbed_env()
+    try:
+        env.reset(seed=13)
+        seen = set()
+        for _ in range(2000):
+            episode = env._sample_episode({})
+            kinds = {e["kind"] for e in episode["events"]}
+            delay = bool(episode["initial_delay_s"]) or "delay_step" in kinds
+            noise = bool(episode["initial_noise_std_m"]) or "noise_step" in kinds
+            seen.add({(False, False): "nominal", (True, False): "delay",
+                      (False, True): "noise", (True, True): "combined"}[(delay, noise)])
+            if kinds:
+                seen.add("transient")
+            elif delay or noise:
+                seen.add("stationary")
+    finally:
+        env.close()
+    assert seen == {*config.DISTURBANCE_CONDITIONS, "stationary", "transient"}
+
+
+def test_combined_transient_steps_delay_and_noise_together():
+    env = disturbed_env()
+    try:
+        env.reset(seed=3)
+        paired = 0
+        for _ in range(2000):
+            events = env._sample_episode({})["events"]
+            if len(events) == 2:
+                paired += 1
+                assert events[0]["start_fraction"] == events[1]["start_fraction"]
+    finally:
+        env.close()
+    assert paired > 0
+
+
+def test_sampled_event_times_resolve_inside_the_driving_window():
+    env = disturbed_env()
+    try:
+        for ideal_time_s in (9.0, 52.6):
+            for fraction in (0.0, 0.5, 1.0):
+                resolved = env._resolve_events(
+                    [{"kind": "delay_step", "start_fraction": fraction, "value": 0.15}],
+                    ideal_time_s,
+                )
+                assert "start_fraction" not in resolved[0]
+                assert (
+                    config.EVENT_START_MIN_S
+                    <= resolved[0]["start_s"]
+                    <= config.EVENT_START_IDEAL_FRACTION * ideal_time_s
+                )
+    finally:
+        env.close()
+
+
+def test_serialized_scenario_events_keep_their_absolute_times():
+    env = PathFollowingEnv(mode="scheduled", training=False, calibration=CALIBRATION)
+    try:
+        env.reset(seed=1, options=scenario(
+            evaluation_mode="transient",
+            condition="combined",
+            events=(
+                DisturbanceEvent("delay_step", 6.0, 0.15),
+                DisturbanceEvent("noise_step", 6.0, 0.0003),
+            ),
+        ).to_options())
+        assert [event["start_s"] for event in env.events] == [6.0, 6.0]
+    finally:
+        env.close()
+
+
+def test_nominal_training_regime_stays_undisturbed():
+    env = PathFollowingEnv(
+        mode="scheduled", training=True, disturbance_training=False, calibration=CALIBRATION
+    )
+    try:
+        env.reset(seed=5)
+        for _ in range(200):
+            episode = env._sample_episode({})
+            assert episode["initial_delay_s"] == 0.0
+            assert episode["initial_noise_std_m"] == 0.0
+            assert episode["events"] == []
     finally:
         env.close()
