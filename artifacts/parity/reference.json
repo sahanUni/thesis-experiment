@@ -1,0 +1,54 @@
+{
+  "manifest": "validation.json",
+  "manifest_sha256": "d11131ff160b8c6e38824746d37ae008888e32ca77dad52066663f325a728e0f",
+  "scenario_count": 24,
+  "arms": {
+    "pid_global_nominal": {
+      "gains": [
+        250.0,
+        4.54543591887462,
+        0.39672846394679073
+      ],
+      "conditions": {
+        "nominal": {
+          "episodes": 12,
+          "completion_rate": 1.0,
+          "failure_adjusted_error_m": 0.0011585981831828752,
+          "mean_distance_m": 0.0025111056851964105
+        },
+        "combined": {
+          "episodes": 12,
+          "completion_rate": 0.0,
+          "failure_adjusted_error_m": 0.15196456316227175,
+          "mean_distance_m": 0.15192431384417304
+        }
+      }
+    },
+    "pid_global_robust": {
+      "gains": [
+        8.0,
+        0.5,
+        4.4
+      ],
+      "conditions": {
+        "nominal": {
+          "episodes": 12,
+          "completion_rate": 1.0,
+          "failure_adjusted_error_m": 0.0023542035866620137,
+          "mean_distance_m": 0.005110214891253787
+        },
+        "combined": {
+          "episodes": 12,
+          "completion_rate": 1.0,
+          "failure_adjusted_error_m": 0.009377856833512492,
+          "mean_distance_m": 0.018224531158566204
+        }
+      }
+    }
+  },
+  "machine": {
+    "node": "sahan_laptop",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10"
+  }
+}

@@ -24,3 +24,6 @@ artifacts/probes/*
 !artifacts/probes/kp_nominal_training_check.csv
 !artifacts/probes/kp_robust_lowering.csv
 runs/
+!artifacts/parity/
+artifacts/parity/*
+!artifacts/parity/reference.json
