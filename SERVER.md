@@ -11,8 +11,8 @@ results may not be mixed with laptop PID numbers in one result table.
 
 ```bash
 ssh <your-account>@login01.int.scc.plus.ac.at
-git clone <repo-url> Thesis_Experiment
-cd Thesis_Experiment
+git clone https://github.com/sahanUni/thesis-experiment.git
+cd thesis-experiment
 ```
 
 ### Building Python 3.12 with uv (no root needed)
@@ -27,7 +27,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh    # only if uv is missing
 source $HOME/.local/bin/env
 
 uv python install 3.12
-cd ~/Thesis_Experiment
+cd ~/thesis-experiment
 uv venv --python 3.12 .venv
 source .venv/bin/activate
 python -V                           # must say 3.12.x
@@ -148,7 +148,7 @@ node, then take the allocation inside it:
 tmux new -s thesis
 srun --partition=base --cpus-per-task=6 --mem=16G --time=12:00:00 --pty bash
 # now on a compute node
-cd ~/Thesis_Experiment && source $HOME/venv312/bin/activate
+cd ~/thesis-experiment && source .venv/bin/activate
 python check_parity.py && python run_seeds.py --phase final
 # Ctrl-b then d to detach; tmux attach -t thesis to return
 ```
@@ -218,8 +218,8 @@ runs that are meant to be compared.
 `artifacts/results/final/`. Copy back, from the laptop:
 
 ```bash
-rsync -av SERVER:Thesis_Experiment/artifacts/results/final ./artifacts/results/
-rsync -av --include="*/" --include="metadata.json" --include="validation_history.jsonl" --include="monitor.csv" --include="*.zip" --exclude="*" SERVER:Thesis_Experiment/artifacts/models/final ./artifacts/models/
+rsync -av SERVER:thesis-experiment/artifacts/results/final ./artifacts/results/
+rsync -av --include="*/" --include="metadata.json" --include="validation_history.jsonl" --include="monitor.csv" --include="*.zip" --exclude="*" SERVER:thesis-experiment/artifacts/models/final ./artifacts/models/
 ```
 
 Model zips are about 1 MB each and are worth having for the dashboard. The
