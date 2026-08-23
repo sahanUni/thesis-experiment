@@ -27,7 +27,7 @@
 
 set -euo pipefail
 
-VENV="${VENV:-venv}"
+VENV="${VENV:-.venv}"
 OUTPUT="${OUTPUT:-artifacts/models/final}"
 SAMPLER="${SAMPLER:-dynamic}"
 PHASE="${PHASE:-final}"

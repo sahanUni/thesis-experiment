@@ -15,7 +15,35 @@ git clone <repo-url> Thesis_Experiment
 cd Thesis_Experiment
 ```
 
-### Using an existing Python 3.12 venv
+### Building Python 3.12 with uv (no root needed)
+
+The cluster's system Python is older than 3.12 and cannot be upgraded without
+root. `uv` downloads its own standalone interpreter into your home directory,
+which needs no privileges:
+
+```bash
+export RAYON_NUM_THREADS=2          # login01 caps threads per user
+curl -LsSf https://astral.sh/uv/install.sh | sh    # only if uv is missing
+source $HOME/.local/bin/env
+
+uv python install 3.12
+cd ~/Thesis_Experiment
+uv venv --python 3.12 .venv
+source .venv/bin/activate
+python -V                           # must say 3.12.x
+uv pip install -r requirements.txt
+python tools/show_versions.py
+```
+
+`uv pip` does not need `ensurepip`, so this also avoids the missing-pip problem
+below.
+
+Two constraints. Build the venv under `$HOME` or another shared filesystem: a
+venv on node-local `/tmp` will not exist after the next `srun`. And export
+`RAYON_NUM_THREADS` before any `uv` command on the login node, or uv fails with
+`failed to initialize global rayon pool` against the per-user thread cap.
+
+### Reusing an existing Python 3.12 venv
 
 If Python 3.12 was built by hand, its venv may have been created without pip.
 Activate the venv and bootstrap pip in place:
@@ -206,6 +234,11 @@ Then, on the laptop:
 
 ## Troubleshooting
 
+- **Activating an old venv fails with a permission error** -- read
+  `<venv>/pyvenv.cfg`. It names the interpreter the venv was built from, and a
+  venv breaks when that interpreter is removed or becomes unreadable rather
+  than when the venv itself changes. Rebuild with uv above; it does not depend
+  on a system interpreter staying put.
 - **`pip: command not found`** -- the venv was created without pip. See
   section 1: `python -m ensurepip --upgrade`, then `python -m pip`.
 - **`Defaulting to user installation because normal site-packages is not
