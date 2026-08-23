@@ -170,7 +170,9 @@ python evaluate.py --manifest manifests/held_out.json --models-root artifacts/mo
 held-out evaluation as one job. It survives a lost tmux session:
 
 ```bash
-sbatch --export=ALL,VENV=$HOME/venv312 slurm_batch.sh
+sbatch slurm_batch.sh                          # uses ./.venv by default
+# or, for a venv outside the repo:
+# sbatch --export=ALL,VENV=$HOME/venv312 slurm_batch.sh
 squeue -u $USER
 tail -f slurm-thesis-final-<jobid>.out
 ```
