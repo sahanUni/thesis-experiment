@@ -22,10 +22,25 @@ Activate the venv and bootstrap pip in place:
 
 ```bash
 source $HOME/venv312/bin/activate     # your existing venv
-python -V                             # confirm 3.12
+python -V                             # must say 3.12.x
+echo "VIRTUAL_ENV=$VIRTUAL_ENV"       # must not be empty
 python -m ensurepip --upgrade         # when the pip command is missing
 python -m pip --version
 ```
+
+`srun --pty bash` opens a **fresh shell on the compute node**, so a venv
+activated on the login node does not carry over. Activate it again after every
+`srun`. If you skip this, pip falls back to the system interpreter and reports
+`site-packages is not writeable`, then fails to resolve `numpy==2.2.6` while
+offering only versions old enough for that Python. Calling the interpreter by
+path avoids the ambiguity entirely:
+
+```bash
+$HOME/venv312/bin/python -m pip install -r requirements.txt
+```
+
+Use `python -m pip`, never bare `pip`: bare `pip` resolves through `PATH` and
+will pick the system one again.
 
 If `ensurepip` is absent too, the interpreter was built without it. Bootstrap
 once from the standalone installer:
@@ -193,6 +208,13 @@ Then, on the laptop:
 
 - **`pip: command not found`** -- the venv was created without pip. See
   section 1: `python -m ensurepip --upgrade`, then `python -m pip`.
+- **`Defaulting to user installation because normal site-packages is not
+  writeable`, then `No matching distribution found for numpy==2.2.6`** -- the
+  venv is not active and pip is running on the system Python. The version list
+  pip offers tells you which: numpy stops at 2.0.2 on Python 3.9 and at 2.2.6
+  on 3.10. Re-activate the venv, or call
+  `$HOME/venv312/bin/python -m pip` by path. `python tools/show_versions.py`
+  reports the interpreter and refuses to pass outside a virtualenv.
 - **`invalid value for environment variable MUJOCO_GL`** -- something set it to
   a backend this machine lacks. The launcher deliberately leaves it unset,
   because training never renders. If a headless box still complains,
