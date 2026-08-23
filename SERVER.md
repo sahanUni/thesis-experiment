@@ -157,12 +157,15 @@ threads per user.
 
 ### Interactive, inside tmux (the usual route)
 
-tmux keeps the allocation alive across disconnects. Start tmux on the login
-node, then take the allocation inside it:
+tmux keeps the allocation alive across disconnects. **Start tmux on the login
+node, then take the allocation inside it** -- that order matters. tmux started
+from inside an allocation puts its server on the compute node, where it dies
+with the allocation and cannot be reached, because compute nodes do not accept
+direct ssh.
 
 ```bash
 tmux new -s thesis
-srun --partition=base --cpus-per-task=6 --mem=16G --time=12:00:00 --pty bash
+srun --partition=base --cpus-per-task=20 --mem=40G --constraint=compute_nodes_cpu \n  --time=12:00:00 --pty bash
 # now on a compute node
 cd ~/thesis-experiment && source .venv/bin/activate
 python check_parity.py && python run_seeds.py --phase final
@@ -239,6 +242,19 @@ and 10 direct arms at 2M (about 2.5 h each), so roughly 32 core-hours.
 | 6 | about 5.5 h |
 | 12 | about 3 h |
 | 20 | about 2.5 h, bounded by one direct run |
+
+The nodes carry 128 cores and 2.3 TB each, so 20 is a modest request:
+
+```
+$ sinfo -o "%n %c %m %f" | sort -u -k2
+cpunode08.dyn.scc.plus.ac.at 128 2321340 compute_nodes_cpu
+gpunode09.dyn.scc.plus.ac.at 128 2321340 compute_nodes_gpu
+```
+
+Beyond 20 the extra cores idle, because there are only 20 runs. Use
+`--constraint=compute_nodes_cpu` to keep off the gpunodes: they report the same
+core count but may carry a different CPU model, and two CPUs produce slightly
+different trajectories.
 
 `run_seeds.py` starts the long direct runs first so the short scheduler runs
 fill the gaps as cores free up. Starting them in declaration order would leave

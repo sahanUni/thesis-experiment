@@ -9,18 +9,21 @@
 # roughly evenly, so parallel environments inside one run saturate quickly
 # while independent runs scale close to linearly.
 #
-# With 6 cores the 20 runs are queued 6 at a time. run_seeds.py starts the 2M
-# direct runs first so the short scheduler runs fill the gaps as cores free up;
-# expect roughly 5.5 hours. Raising --cpus-per-task shortens that nearly
-# linearly up to 20, where the batch takes about the wall time of one direct
-# run.
+# 20 cores of a 128-core node: one per run, so the batch takes about the wall
+# time of a single direct run, roughly 2.5 hours. Asking for more would idle.
+# Dropping to 6 still works and takes about 5.5 hours.
+#
+# constraint=compute_nodes_cpu keeps every run on the CPU nodes. The gpunodes
+# report the same core count but may carry a different CPU model, and two CPUs
+# produce slightly different trajectories -- see check_parity.py.
 
 #SBATCH --job-name=thesis-final
 #SBATCH --partition=base
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=6
-#SBATCH --mem=16G
+#SBATCH --cpus-per-task=20
+#SBATCH --mem=40G
+#SBATCH --constraint=compute_nodes_cpu
 #SBATCH --time=12:00:00
 #SBATCH --output=slurm-%x-%j.out
 #SBATCH --mail-type=END,FAIL
