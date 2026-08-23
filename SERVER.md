@@ -180,10 +180,41 @@ After training, still inside the allocation:
 python evaluate.py --manifest manifests/held_out.json --models-root artifacts/models/final --run-id final
 ```
 
+### Reattaching, and why the node changes
+
+The tmux session lives on `login01`, not on the compute node. The `srun` shell
+inside it runs on whichever node SLURM gave you. So you reconnect through the
+login node:
+
+```bash
+ssh <your-account>@login01.int.scc.plus.ac.at
+tmux attach -t thesis
+```
+
+You never ssh to `cpunode13` directly, and you do not need to. But the tmux
+session is only as durable as `login01`: if it reboots or the session is
+killed, the allocation and every running process go with it.
+
+The node itself will differ next time. That does not affect your files -- home
+is shared ceph, visible from every node -- but it does affect numbers. Two
+different CPUs produce slightly different trajectories, which is exactly the
+drift `check_parity.py` measures. So keep one result set to one node:
+
+- **Training and evaluation belong in the same job.** `slurm_batch.sh` runs
+  parity, all twenty runs, and the held-out evaluation in one allocation, so
+  they cannot land on different nodes.
+- If you must split them, pin the node with `--nodelist=cpunode13`, or check
+  whether the partition is homogeneous first:
+  `sinfo -o "%n %c %m %f" | sort -u -k2`.
+- `evaluate.py` records the node, CPU model, and SLURM job id under `machine`
+  in `metadata.json`, so a result set that accidentally spans nodes is
+  detectable afterwards rather than silently wrong.
+
 ### Batch, fire and forget
 
 `slurm_batch.sh` runs the parity check, the twenty training runs, and the
-held-out evaluation as one job. It survives a lost tmux session:
+held-out evaluation as one job. It needs no tmux at all and survives a lost
+login node, which makes it the better choice for a 5.5 hour batch:
 
 ```bash
 sbatch slurm_batch.sh                          # uses ./.venv by default

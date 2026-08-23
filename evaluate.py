@@ -6,7 +6,9 @@ import argparse
 import hashlib
 from importlib.metadata import version
 import json
+import os
 from pathlib import Path
+import platform
 import re
 import shutil
 import time
@@ -21,6 +23,26 @@ from scenarios import ScenarioManifest
 
 
 SAFE_NAME = re.compile(r"^[a-z0-9_]+$")
+
+
+def machine_description() -> dict[str, Any]:
+    """Identify the host, because on a cluster the node varies per allocation."""
+    model = ""
+    try:
+        for line in Path("/proc/cpuinfo").read_text(encoding="utf-8").splitlines():
+            if line.startswith("model name"):
+                model = line.split(":", 1)[1].strip()
+                break
+    except OSError:
+        pass
+    return {
+        "node": platform.node(),
+        "platform": platform.platform(),
+        "processor": model or platform.processor(),
+        "python": platform.python_version(),
+        "slurm_job_id": os.environ.get("SLURM_JOB_ID"),
+        "slurm_nodelist": os.environ.get("SLURM_JOB_NODELIST"),
+    }
 
 
 def sha256(path: Path) -> str:
@@ -216,6 +238,10 @@ def main() -> None:
         ).tolist(),
         "save_traces": args.save_traces,
         "packages": {name: version(name) for name in ("numpy", "mujoco", "gymnasium", "stable-baselines3", "torch")},
+        # PLAN.md requires final results from one declared machine, and on a
+        # cluster the node varies per allocation. Record which one produced
+        # this run so a mixed-node result set is detectable afterwards.
+        "machine": machine_description(),
     }
     (output / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
     print(f"evaluated {len(controllers)} controllers on {len(manifest.scenarios)} paired scenarios")
