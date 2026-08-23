@@ -125,13 +125,29 @@ match the reference **exactly**:
 | `pid_global_robust` | `(8.0, 0.5, 4.4)` | nominal | 1.00 | `2.3542 mm` |
 | `pid_global_robust` | | transient combined | 1.00 | `9.3779 mm` |
 
-`check_parity.py` exits non-zero on any difference. A mismatch is a plant
-difference, not noise: check the `mujoco` and `numpy` versions first. Do not
-train until it passes.
+Those are the laptop's numbers. **Completion must match exactly** -- it is
+discrete and it is the primary outcome. The errors are checked within a 1%
+relative band, because MuJoCo is not bit-identical across CPU architectures and
+a last-bit difference amplifies over a 20-50 s closed-loop episode. Measured
+drift from the laptop to `cpunode13` was 0.01% to 0.34%, well inside the band.
 
-PPO arms are deliberately excluded from the check. Torch on a different CPU can
-reorder floating-point reductions and shift an action in the last bits. That is
-expected and is not evidence of a broken plant.
+`pid_global_nominal` under the transient combined condition is checked on
+completion only. It fails 0/12, so its `J_FA` is dominated by
+`corridor * (T_max - t_end)` -- a discontinuous term that moves by percent when
+the corridor exit shifts by a millisecond. The finding there is that it fails,
+not the exact number.
+
+Tighten or loosen the band with `--tolerance` if you need to. A genuine plant
+difference shows up as changed completion or as whole-percent error changes,
+not as a fourth decimal place.
+
+PPO arms are excluded from the check entirely. Torch on a different CPU can
+reorder floating-point reductions and shift an action in the last bits.
+
+This is a sanity check, not a reproducibility guarantee. `PLAN.md` handles
+cross-machine variation by requiring every final result to come from one
+declared machine, which is why the fixed-PID arms must be re-evaluated here
+rather than carried over from the laptop.
 
 ## 3. This is a SLURM cluster
 

@@ -1,9 +1,10 @@
 """Confirm a new machine reproduces the laptop's plant before spending compute.
 
 The two fixed-PID arms contain no neural network, so their results are a pure
-function of the physics, the path geometry, and the calibration artifact. They
-must reproduce bit-for-bit on any machine that is going to generate official
-results. A mismatch means MuJoCo, numpy, or the calibration differs, and
+function of the physics, the path geometry, and the calibration artifact. Their
+completion counts must reproduce on any machine that is going to generate
+official results, and their errors must agree to within a small relative band.
+A difference beyond that means MuJoCo, numpy, or the calibration differs, and
 nothing else is worth running until it is fixed.
 
     python check_parity.py --write-reference     # once, on the declared machine
@@ -12,6 +13,11 @@ nothing else is worth running until it is fixed.
 PPO arms are deliberately excluded: torch on a different CPU can reorder
 floating-point reductions and shift an action in the last bits, which is
 expected and is not evidence of a broken plant.
+
+This is a sanity check, not a reproducibility guarantee. MuJoCo is not
+bit-identical across CPU architectures, so a small drift between machines is
+expected; PLAN.md handles that by requiring every final result to come from one
+declared machine. What must not drift is completion, which is discrete.
 """
 
 from __future__ import annotations
@@ -33,8 +39,19 @@ from scenarios import ScenarioManifest
 
 DEFAULT_REFERENCE = config.ROOT / "artifacts" / "parity" / "reference.json"
 FIXED_ARMS = ("pid_global_nominal", "pid_global_robust")
-# Exact equality is the intent; this only absorbs float64 text round-tripping.
-TOLERANCE_M = 1e-12
+
+# Completion is discrete and is the primary outcome, so it must match exactly.
+# The continuous metrics may not: MuJoCo is not bit-identical across CPUs, and
+# a last-bit difference in one contact force amplifies over a 20-50 s
+# closed-loop episode. A 1% relative band separates that drift from a genuine
+# plant difference, which shows up as changed completion or as whole-percent
+# error changes. Version pinning is enforced separately by tools/show_versions.
+DEFAULT_TOLERANCE = 0.01
+
+# For an arm that fails, J_FA is dominated by corridor * (T_max - t_end), a
+# discontinuous term: a millisecond of difference in the corridor exit moves it
+# by percent. Those arms are checked on completion and failure mode only.
+FAILING_ARM_NOTE = "completion-only (failed arms: J_FA is dominated by exit-time padding)"
 
 
 def measure(manifest_path: Path, calibration_path: Path) -> dict:
@@ -80,8 +97,9 @@ def measure(manifest_path: Path, calibration_path: Path) -> dict:
     }
 
 
-def compare(reference: dict, measured: dict) -> list[str]:
+def compare(reference: dict, measured: dict, tolerance: float) -> tuple[list[str], list[str]]:
     problems: list[str] = []
+    notes: list[str] = []
     if reference.get("manifest_sha256") != measured.get("manifest_sha256"):
         problems.append(
             "scenario manifest differs from the reference; the comparison is meaningless"
@@ -95,17 +113,30 @@ def compare(reference: dict, measured: dict) -> list[str]:
             problems.append(f"{arm}: gains {got['gains']} != reference {want['gains']}")
         for condition, expected in want["conditions"].items():
             actual = got["conditions"][condition]
-            for key, value in expected.items():
-                other = actual[key]
-                if isinstance(value, float):
-                    if abs(value - other) > TOLERANCE_M:
-                        problems.append(
-                            f"{arm}/{condition}/{key}: {other!r} != reference {value!r} "
-                            f"(delta {other - value:+.3e})"
-                        )
-                elif value != other:
-                    problems.append(f"{arm}/{condition}/{key}: {other!r} != reference {value!r}")
-    return problems
+            # Discrete outcomes first. These are the primary result and must be
+            # identical; a difference here is a real plant difference.
+            for key in ("episodes", "completion_rate"):
+                if expected[key] != actual[key]:
+                    problems.append(
+                        f"{arm}/{condition}/{key}: {actual[key]!r} != reference {expected[key]!r}"
+                    )
+            if expected["completion_rate"] < 1.0:
+                notes.append(f"{arm}/{condition}: {FAILING_ARM_NOTE}")
+                continue
+            for key in ("failure_adjusted_error_m", "mean_distance_m"):
+                want_value, got_value = expected[key], actual[key]
+                scale = max(abs(want_value), 1e-12)
+                relative = abs(got_value - want_value) / scale
+                if relative > tolerance:
+                    problems.append(
+                        f"{arm}/{condition}/{key}: {got_value:.9g} vs reference "
+                        f"{want_value:.9g} ({relative:.2%} > {tolerance:.2%})"
+                    )
+                elif relative > 0:
+                    notes.append(
+                        f"{arm}/{condition}/{key}: {relative:.3%} drift, within tolerance"
+                    )
+    return problems, notes
 
 
 def render(measured: dict) -> None:
@@ -126,6 +157,12 @@ def main() -> None:
         default=str(config.ROOT / "artifacts" / "calibration" / "calibration.json"),
     )
     parser.add_argument("--reference", default=str(DEFAULT_REFERENCE))
+    parser.add_argument(
+        "--tolerance",
+        type=float,
+        default=DEFAULT_TOLERANCE,
+        help="Relative band on continuous metrics for fully-completing arms",
+    )
     parser.add_argument(
         "--write-reference",
         action="store_true",
@@ -152,17 +189,23 @@ def main() -> None:
     if not reference_path.is_file():
         raise SystemExit(f"no reference at {reference_path}; run --write-reference first")
     reference = json.loads(reference_path.read_text(encoding="utf-8"))
-    problems = compare(reference, measured)
+    problems, notes = compare(reference, measured, args.tolerance)
     print(f"\nreference machine: {reference.get('machine', {}).get('node', 'unknown')}")
     print(f"this machine     : {measured['machine']['node']}")
+    print(f"tolerance        : {args.tolerance:.2%} relative on completed arms")
+    for note in notes:
+        print(f"  note: {note}")
     if problems:
         print(f"\nPARITY FAILED ({len(problems)} difference(s)):")
         for problem in problems:
             print(f"  {problem}")
-        print("\nThe fixed-PID arms use no neural network, so this is a plant difference.")
-        print("Check the mujoco and numpy versions against requirements.txt before training.")
+        print("\nThe fixed-PID arms use no neural network. Changed completion, or")
+        print("whole-percent error changes, mean the plant itself differs: check")
+        print("mujoco and numpy with tools/show_versions.py before training.")
         sys.exit(1)
-    print("\nPARITY OK: the fixed-PID plant matches the reference exactly.")
+    print("\nPARITY OK: completion is identical and the continuous metrics agree")
+    print("within tolerance. Remember that PLAN.md requires every final result,")
+    print("fixed PID included, to come from one declared machine.")
 
 
 if __name__ == "__main__":

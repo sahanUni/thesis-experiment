@@ -305,3 +305,39 @@ episodes, rising only to `8.0` afterwards, while gain total variation rises
 from `4.0` to `43.7` per second. It wins by fine modulation around a low gain,
 not by switching operating points, and the write-up must describe the measured
 mechanism rather than the intended one.
+
+## 2026-08-23: Declared machine and cross-machine parity tolerance
+
+The five-seed matrix runs on the university SLURM cluster
+(`cpunode*.dyn.scc.plus.ac.at`), not the laptop. `PLAN.md` already requires
+final results from one declared machine, so **the cluster is that machine** and
+the fixed-PID arms are re-evaluated there. No laptop number enters the final
+result tables.
+
+`check_parity.py` originally demanded bit-identical agreement between machines.
+That was wrong. With every pinned package version identical, the cluster
+reproduced all four completion rates exactly but the continuous metrics drifted:
+
+| arm / condition | laptop | cpunode13 | drift |
+|---|---:|---:|---:|
+| `pid_global_nominal` nominal | `1.1586 mm` | `1.1601 mm` | `0.13%` |
+| `pid_global_robust` nominal | `2.3542 mm` | `2.3623 mm` | `0.34%` |
+| `pid_global_robust` combined | `9.3779 mm` | `9.3790 mm` | `0.01%` |
+| `pid_global_nominal` combined | `151.96 mm` | `157.52 mm` | `3.66%` |
+
+MuJoCo is not bit-identical across CPU architectures, and a last-bit difference
+in one contact force amplifies over a 20-50 s closed-loop episode. The check now
+requires exact agreement on episode count and completion rate, and a `1%`
+relative band on the continuous metrics.
+
+The `3.66%` outlier is `pid_global_nominal` under the transient combined
+condition, which completes `0/12`. Its `J_FA` is dominated by
+`corridor * (T_max - t_end)`, a discontinuous term that moves by percent when
+the corridor exit shifts by a millisecond. Arms that do not complete every
+episode are therefore checked on completion and failure mode only. The claim
+that arm supports is that a nominal-tuned PID cannot survive a `0.15 s` delay,
+and that claim rests on the completion rate, which reproduced exactly.
+
+This is a sanity check against a wrong environment, not a reproducibility
+guarantee. Exact version pinning is enforced separately by
+`tools/show_versions.py`.
