@@ -65,6 +65,7 @@ class Job:
     seed: int
     command: list[str]
     log_path: Path
+    timesteps: int
 
 
 def build_jobs(args: argparse.Namespace, seeds: tuple[int, ...]) -> list[Job]:
@@ -77,6 +78,7 @@ def build_jobs(args: argparse.Namespace, seeds: tuple[int, ...]) -> list[Job]:
             continue
         profile = profile_for(mode)
         timesteps = args.scheduler_timesteps if mode == "scheduled" else args.direct_timesteps
+        timesteps = timesteps or profile.default_timesteps
         arm = f"ppo_{'scheduler' if mode == 'scheduled' else 'direct'}_{regime}"
         for seed in seeds:
             run_dir = output / arm / f"seed_{seed}"
@@ -86,7 +88,7 @@ def build_jobs(args: argparse.Namespace, seeds: tuple[int, ...]) -> list[Job]:
                 "--mode", mode,
                 "--regime", regime,
                 "--seed", str(seed),
-                "--timesteps", str(timesteps or profile.default_timesteps),
+                "--timesteps", str(timesteps),
                 "--eval-freq", str(
                     args.scheduler_eval_freq if mode == "scheduled" else args.direct_eval_freq
                 ),
@@ -97,7 +99,14 @@ def build_jobs(args: argparse.Namespace, seeds: tuple[int, ...]) -> list[Job]:
             ]
             if mode == "scheduled":
                 command += ["--calibration", str(Path(args.scheduler_calibration).resolve())]
-            jobs.append(Job(arm, mode, regime, seed, command, run_dir / "train.log"))
+            jobs.append(
+                Job(arm, mode, regime, seed, command, run_dir / "train.log", timesteps)
+            )
+    # Longest first. When the matrix is wider than the granted cores the runs
+    # are queued, and starting the 2M direct runs last would leave cores idle
+    # while one of them finishes alone. Longest-processing-time-first cuts the
+    # makespan by roughly an hour on six cores.
+    jobs.sort(key=lambda job: job.timesteps, reverse=True)
     return jobs
 
 

@@ -2,35 +2,39 @@
 # Frozen five-seed PPO matrix as a SLURM batch job.
 #
 #   sbatch slurm_batch.sh
-#   sbatch --export=ALL,OUTPUT=artifacts/models/final_rerun slurm_batch.sh
+#   sbatch --export=ALL,VENV=$HOME/venv312,OUTPUT=artifacts/models/final slurm_batch.sh
 #
 # One process per (arm, seed), one thread each: 4 arms x 5 seeds = 20 runs.
 # Env stepping and the serial PPO gradient update split training wall time
 # roughly evenly, so parallel environments inside one run saturate quickly
 # while independent runs scale close to linearly.
 #
-# 20 cores, not a whole node. The scheduler arms are 300k decisions (~40 min)
-# and the direct arms 2M (~2.5 h), so with all 20 concurrent the batch finishes
-# in about the wall time of one direct run. More cores would only idle.
+# With 6 cores the 20 runs are queued 6 at a time. run_seeds.py starts the 2M
+# direct runs first so the short scheduler runs fill the gaps as cores free up;
+# expect roughly 5.5 hours. Raising --cpus-per-task shortens that nearly
+# linearly up to 20, where the batch takes about the wall time of one direct
+# run.
 
 #SBATCH --job-name=thesis-final
 #SBATCH --partition=base
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=20
-#SBATCH --mem=40G
+#SBATCH --cpus-per-task=6
+#SBATCH --mem=16G
 #SBATCH --time=12:00:00
 #SBATCH --output=slurm-%x-%j.out
 #SBATCH --mail-type=END,FAIL
 
 set -euo pipefail
 
+VENV="${VENV:-venv}"
 OUTPUT="${OUTPUT:-artifacts/models/final}"
 SAMPLER="${SAMPLER:-dynamic}"
 PHASE="${PHASE:-final}"
 
 cd "${SLURM_SUBMIT_DIR:-$(dirname "$0")}"
-source venv/bin/activate
+# shellcheck disable=SC1091
+source "${VENV}/bin/activate"
 
 # run_seeds.py exports these to its children too; setting them here covers
 # anything that reads them before the launcher starts. MUJOCO_GL is left unset
@@ -44,6 +48,7 @@ echo "host      : $(hostname)"
 echo "job       : ${SLURM_JOB_ID:-none} on ${SLURM_JOB_PARTITION:-none}"
 echo "cores     : ${SLURM_CPUS_PER_TASK:-unknown} allocated"
 echo "python    : $(python -V 2>&1)"
+echo "venv      : ${VENV}"
 echo "output    : ${OUTPUT}"
 echo
 
