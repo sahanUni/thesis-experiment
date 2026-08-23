@@ -373,3 +373,30 @@ def test_delay_recovery_restores_undelayed_actuation():
         assert seen[-1] == 0.0
     finally:
         env.close()
+
+
+def test_single_step_sampler_profile_restores_one_permanent_change():
+    env = PathFollowingEnv(
+        mode="scheduled", training=True, disturbance_training=True,
+        sampler_profile="single_step", calibration=CALIBRATION,
+    )
+    try:
+        env.reset(seed=23)
+        clean = 0
+        for _ in range(2000):
+            episode = env._sample_episode({})
+            for kind in ("delay_step", "noise_step"):
+                events = [e for e in episode["events"] if e["kind"] == kind]
+                assert len(events) <= 1
+                assert all(e["value"] > 0.0 for e in events)
+            if not episode["events"] and not episode["initial_delay_s"] \
+                    and not episode["initial_noise_std_m"]:
+                clean += 1
+    finally:
+        env.close()
+    assert 0.05 < clean / 2000 < 0.16
+
+
+def test_unknown_sampler_profile_is_rejected():
+    with pytest.raises(ValueError, match="unknown sampler profile"):
+        PathFollowingEnv(mode="scheduled", sampler_profile="nope", calibration=CALIBRATION)

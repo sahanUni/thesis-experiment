@@ -77,6 +77,23 @@ EVENT_START_IDEAL_FRACTION = 0.8
 DISTURBANCE_CHANGE_COUNT_WEIGHTS = (0.50, 0.30, 0.20)
 DISTURBANCE_RECOVERY_PROB = 0.35
 
+# Named disturbance samplers. "dynamic" is the protocol default. "single_step"
+# restores the protocol v3 sampler -- one permanent change per channel and the
+# old condition weights -- so the widened scheduler gain box can be ablated
+# against the sampler change that landed with it.
+SAMPLER_PROFILES: dict[str, dict[str, Any]] = {
+    "dynamic": {
+        "condition_weights": DISTURBANCE_CONDITION_WEIGHTS,
+        "change_count_weights": DISTURBANCE_CHANGE_COUNT_WEIGHTS,
+        "recovery_prob": DISTURBANCE_RECOVERY_PROB,
+    },
+    "single_step": {
+        "condition_weights": (0.10, 0.30, 0.20, 0.40),
+        "change_count_weights": (1.0,),
+        "recovery_prob": 0.0,
+    },
+}
+
 
 PATH_SPLITS: dict[str, tuple[dict[str, Any], ...]] = {
     "train": (

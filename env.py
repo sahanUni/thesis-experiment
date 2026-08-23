@@ -49,6 +49,7 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
         mode: str,
         training: bool = True,
         disturbance_training: bool = False,
+        sampler_profile: str = "dynamic",
         calibration: GainCalibration | None = None,
         fixed_gains: PIDGains | None = None,
         path_specs: tuple[dict[str, Any], ...] | None = None,
@@ -66,6 +67,10 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
         self.profile = profile_for(mode)
         self.training = bool(training)
         self.disturbance_training = bool(disturbance_training)
+        if sampler_profile not in config.SAMPLER_PROFILES:
+            raise ValueError(f"unknown sampler profile: {sampler_profile!r}")
+        self.sampler_profile = sampler_profile
+        self._sampler = config.SAMPLER_PROFILES[sampler_profile]
         self.calibration = calibration or GainCalibration.development_default()
         self.fixed_gains = fixed_gains
         self.path_specs = tuple(path_specs or config.PATH_SPLITS["train"])
@@ -139,7 +144,7 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
         index = int(
             self.np_random.choice(
                 len(config.DISTURBANCE_CONDITIONS),
-                p=config.DISTURBANCE_CONDITION_WEIGHTS,
+                p=self._sampler["condition_weights"],
             )
         )
         condition = config.DISTURBANCE_CONDITIONS[index]
@@ -155,7 +160,7 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
             return
         fractions = self._sample_change_fractions()
         for position, start_fraction in enumerate(fractions):
-            recovered = position > 0 and self.np_random.random() < config.DISTURBANCE_RECOVERY_PROB
+            recovered = position > 0 and self.np_random.random() < self._sampler["recovery_prob"]
             if wants_delay:
                 episode["events"].append({
                     "kind": "delay_step",
@@ -183,8 +188,8 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
         """Sorted change times so later events override earlier ones in _apply_events."""
         count = 1 + int(
             self.np_random.choice(
-                len(config.DISTURBANCE_CHANGE_COUNT_WEIGHTS),
-                p=config.DISTURBANCE_CHANGE_COUNT_WEIGHTS,
+                len(self._sampler["change_count_weights"]),
+                p=self._sampler["change_count_weights"],
             )
         )
         return sorted(float(self.np_random.random()) for _ in range(count))

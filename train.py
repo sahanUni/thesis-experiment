@@ -40,6 +40,8 @@ def main() -> None:
     parser.add_argument("--eval-freq", type=int)
     parser.add_argument("--validation-limit", type=int, default=0, help="Development-only cap; 0 uses the full manifest")
     parser.add_argument("--output", default=str(config.ROOT / "artifacts" / "models" / "protocol_v2"))
+    parser.add_argument("--sampler-profile", choices=tuple(config.SAMPLER_PROFILES),
+                        default="dynamic", help="Disturbance sampler; single_step ablates the v3 sampler")
     parser.add_argument("--torch-threads", type=int, default=1)
     args = parser.parse_args()
     profile = profile_for(args.mode)
@@ -82,6 +84,7 @@ def main() -> None:
             mode=args.mode,
             training=training,
             disturbance_training=args.regime == "disturbed",
+            sampler_profile=args.sampler_profile,
             calibration=calibration,
         )
 
@@ -154,6 +157,7 @@ def main() -> None:
         "arm": arm,
         "mode": args.mode,
         "regime": args.regime,
+        "sampler_profile": args.sampler_profile,
         "seed": args.seed,
         "timesteps": args.timesteps,
         "wall_time_s": time.time() - started,
