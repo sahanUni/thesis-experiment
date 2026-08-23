@@ -121,7 +121,10 @@ PROFILES = {
         frame_fields=DIRECT_FRAME_FIELDS,
         history_length=10,
         action_size=1,
-        default_timesteps=1_000_000,
+        # 1M decisions left validation completion oscillating between 0.46
+        # and 1.00 under the dynamic sampler; 2M recovers most of the loss
+        # but does not remove the oscillation. See DECISIONS.md 2026-08-23.
+        default_timesteps=2_000_000,
         default_eval_freq=100_000,
         tracking_scale_m=0.1,
         tracking_weight=0.035,

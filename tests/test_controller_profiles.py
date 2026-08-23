@@ -22,7 +22,7 @@ def test_direct_profile_matches_50hz_end_to_end_checkpoint_contract():
     profile = controller_profiles.profile_for("direct")
     assert profile.observation_size == 130
     assert profile.action_size == 1
-    assert profile.default_timesteps == 1_000_000
+    assert profile.default_timesteps == 2_000_000
     assert profile.default_eval_freq == 100_000
     assert profile.ppo_kwargs["gamma"] == 0.999
     assert profile.ppo_kwargs["gae_lambda"] == 0.995

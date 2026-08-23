@@ -269,3 +269,39 @@ Superseded by these changes: all `protocol_v3` scheduler checkpoints, and the
 `protocol_v3` direct disturbed checkpoint. The `protocol_v3` direct nominal
 checkpoint is unaffected -- the nominal regime never enters the disturbance
 sampler and the scheduler box does not apply to the direct arm.
+
+## 2026-08-23: Sampler ablation and the frozen training distribution
+
+The protocol v4 scheduler result was confounded by three simultaneous changes.
+Re-running the disturbed scheduler with the widened gain box but the previous
+sampler separates them, on the 12 transient combined audit scenarios:
+
+| Gain box | Sampler | Disturbed scheduler |
+|---|---|---:|
+| `Kp 5-50` | single step | `11.48 mm` |
+| `Kp 5-300` | single step | `8.82 mm` |
+| `Kp 5-300` | dynamic | `6.86 mm` |
+
+The box accounts for roughly `60%` of the improvement and the dynamic
+transients for the rest. Neither alone explains it. The box change alone is
+already enough to pass the re-tuned robust PID at `9.38 mm`, so the learned
+result does not depend on the sampler change.
+
+Adopt the `dynamic` sampler for both learned arms. A disturbance that can end
+is more defensible than one that is permanent by construction, and the
+experiment requires one shared training distribution across architectures.
+
+The cost is carried by the direct arm. At `1M` decisions under the dynamic
+sampler it reached `29.31 mm`; at `2M` it reached `16.54 mm`, against
+`14.52 mm` under the single-step sampler. Its validation completion still
+oscillates between `0.46` and `1.00` late in training, so the instability is a
+property of the arm rather than of the budget. Raise the direct training budget
+to `2M` decisions and report the instability as a result.
+
+Recorded limitation: the disturbed scheduler does not implement the
+stiff-when-clean, soft-when-delayed strategy that motivated widening the box.
+Measured mean `Kp` is about `6.7` before the event in both clean and delayed
+episodes, rising only to `8.0` afterwards, while gain total variation rises
+from `4.0` to `43.7` per second. It wins by fine modulation around a low gain,
+not by switching operating points, and the write-up must describe the measured
+mechanism rather than the intended one.
