@@ -153,15 +153,41 @@ class PathFollowingEnv(gym.Env[np.ndarray, np.ndarray]):
             episode["initial_delay_s"] = delay if wants_delay else 0.0
             episode["initial_noise_std_m"] = noise if wants_noise else 0.0
             return
-        start_fraction = float(self.np_random.random())
-        if wants_delay:
-            episode["events"].append(
-                {"kind": "delay_step", "start_fraction": start_fraction, "value": delay}
+        fractions = self._sample_change_fractions()
+        for position, start_fraction in enumerate(fractions):
+            recovered = position > 0 and self.np_random.random() < config.DISTURBANCE_RECOVERY_PROB
+            if wants_delay:
+                episode["events"].append({
+                    "kind": "delay_step",
+                    "start_fraction": start_fraction,
+                    "value": 0.0 if recovered else (
+                        delay if position == 0 else
+                        self._sample_severity(
+                            config.TRAIN_DELAY_RANGE_S, config.CONFIG.delay_severity_s
+                        )
+                    ),
+                })
+            if wants_noise:
+                episode["events"].append({
+                    "kind": "noise_step",
+                    "start_fraction": start_fraction,
+                    "value": 0.0 if recovered else (
+                        noise if position == 0 else
+                        self._sample_severity(
+                            config.TRAIN_NOISE_RANGE_M, config.CONFIG.noise_severity_m
+                        )
+                    ),
+                })
+
+    def _sample_change_fractions(self) -> list[float]:
+        """Sorted change times so later events override earlier ones in _apply_events."""
+        count = 1 + int(
+            self.np_random.choice(
+                len(config.DISTURBANCE_CHANGE_COUNT_WEIGHTS),
+                p=config.DISTURBANCE_CHANGE_COUNT_WEIGHTS,
             )
-        if wants_noise:
-            episode["events"].append(
-                {"kind": "noise_step", "start_fraction": start_fraction, "value": noise}
-            )
+        )
+        return sorted(float(self.np_random.random()) for _ in range(count))
 
     def _resolve_events(
         self,

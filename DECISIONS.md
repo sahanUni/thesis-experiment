@@ -209,3 +209,63 @@ no adaptation claim is supported by the current evidence.
 
 All four protocol-v2 seed-11 checkpoints predate these changes and are
 superseded development evidence.
+
+## 2026-08-23: Robust PID Kp, scheduler box ceiling, and dynamic delay
+
+### Robust fixed PID lowered to Kp = 8
+
+The `Kp = 18` robust baseline was selected from a three-point confirmation at
+`18, 22, 26`, with `18` the lowest value tested. A downward sweep on the
+28-scenario robust calibration subset gives `6.47 mm` at `Kp=8` against
+`10.49 mm` at `Kp=18`, with completion held at `1.0` throughout. By the
+existing `0.5%` practical-equivalence rule `Kp=8` is the only candidate in the
+band. Set `robust` to `(8.0, 0.5, 4.4)` and lower the fixed-PID search floor
+from `Kp 10` to `Kp 4` so the box contains the selection. `Ki` and `Kd` are
+unchanged, and the nominal PID stays at `(250.0, 4.5454, 0.3967)`.
+
+### Scheduler gain box ceiling raised to Kp = 300
+
+The scheduler box was `Kp 10-50`, later `5-50`, while the fixed-PID box is
+`4-300` and the nominal optimum is `Kp = 250`. The scheduler could not
+represent the nominal-optimal gain at all, so the strategy gain scheduling
+exists to express -- stiff while undisturbed, soft once delayed -- was
+unreachable by construction. The best it could do was imitate the robust PID,
+which is what the audit shows: `2.59 mm` nominal against the robust PID's
+`2.35 mm`.
+
+Set the scheduler box to `Kp 5-300`, matching the fixed-PID search range. The
+piecewise mapping around `Kp = 26` puts fine resolution below the anchor, where
+delayed operation needs it, and coarse resolution above it across the flat
+`250-400` nominal plateau. The box-relative rate limit follows the box to
+`147.5 /s` for `Kp`, which traverses `250 -> 8` in `1.64 s` against a
+transient event at `6.0 s`. This supersedes the `20.0 /s` absolute limit and
+the earlier concern about box-relative limits scaling with box width: here the
+faster limit is required for the box to be usable at all.
+
+### Transient disturbances are no longer a single one-way step
+
+A transient episode now takes one to three changes per channel (weights
+`0.50, 0.30, 0.20`), and any change after the first returns the channel to zero
+with probability `0.35`. Measured over 4000 samples, `25%` of disturbed
+episodes now recover to zero delay. The previous single permanent step taught
+the policies that a disturbance, once seen, never ends. Evaluation manifests
+are unchanged and still use one declared step, so training covers a superset
+of the scored condition.
+
+Condition weights move from `(0.10, 0.30, 0.20, 0.40)` to
+`(0.25, 0.25, 0.15, 0.35)`. At `0.10` clean episodes the direct disturbed arm
+regressed on the nominal condition from `7.81 mm` to `15.81 mm`, worse than the
+nominal-trained direct arm, failing the requirement that disturbance-trained
+agents retain acceptable nominal behavior.
+
+### Attribution caveat
+
+The box ceiling, the dynamic transients, and the condition reweighting land
+together, so the next run cannot attribute its result to any one of them.
+If the scheduler improves materially, re-run with the box change alone before
+claiming the box was the cause.
+
+Superseded by these changes: all `protocol_v3` scheduler checkpoints, and the
+`protocol_v3` direct disturbed checkpoint. The `protocol_v3` direct nominal
+checkpoint is unaffected -- the nominal regime never enters the disturbance
+sampler and the scheduler box does not apply to the direct arm.

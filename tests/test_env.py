@@ -269,9 +269,15 @@ def test_combined_transient_steps_delay_and_noise_together():
         paired = 0
         for _ in range(2000):
             events = env._sample_episode({})["events"]
-            if len(events) == 2:
-                paired += 1
-                assert events[0]["start_fraction"] == events[1]["start_fraction"]
+            kinds = {e["kind"] for e in events}
+            if kinds != {"delay_step", "noise_step"}:
+                continue
+            paired += 1
+            by_kind = {
+                kind: sorted(e["start_fraction"] for e in events if e["kind"] == kind)
+                for kind in kinds
+            }
+            assert by_kind["delay_step"] == by_kind["noise_step"]
     finally:
         env.close()
     assert paired > 0
@@ -323,5 +329,47 @@ def test_nominal_training_regime_stays_undisturbed():
             assert episode["initial_delay_s"] == 0.0
             assert episode["initial_noise_std_m"] == 0.0
             assert episode["events"] == []
+    finally:
+        env.close()
+
+
+def test_transient_disturbances_can_change_more_than_once_and_recover():
+    env = disturbed_env()
+    try:
+        env.reset(seed=17)
+        multi = recovered = 0
+        for _ in range(3000):
+            events = [e for e in env._sample_episode({})["events"] if e["kind"] == "delay_step"]
+            if len(events) > 1:
+                multi += 1
+                fractions = [e["start_fraction"] for e in events]
+                assert fractions == sorted(fractions)
+                if any(e["value"] == 0.0 for e in events):
+                    recovered += 1
+            if events:
+                assert events[0]["value"] > 0.0
+    finally:
+        env.close()
+    assert multi > 0
+    assert recovered > 0
+
+
+def test_delay_recovery_restores_undelayed_actuation():
+    env = PathFollowingEnv(mode="scheduled", training=False, calibration=CALIBRATION)
+    try:
+        env.reset(seed=1, options=scenario(
+            evaluation_mode="transient",
+            condition="delay",
+            events=(
+                DisturbanceEvent("delay_step", 0.5, 0.15),
+                DisturbanceEvent("delay_step", 1.0, 0.0),
+            ),
+        ).to_options())
+        seen = []
+        for _ in range(80):
+            env.step(np.zeros(3, dtype=np.float32))
+            seen.append(env.actuator_delay_s)
+        assert max(seen) == pytest.approx(0.15)
+        assert seen[-1] == 0.0
     finally:
         env.close()
