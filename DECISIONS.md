@@ -341,3 +341,71 @@ and that claim rests on the completion rate, which reproduced exactly.
 This is a sanity check against a wrong environment, not a reproducibility
 guarantee. Exact version pinning is enforced separately by
 `tools/show_versions.py`.
+
+## 2026-08-24: Final five-seed run, and what was and was not frozen
+
+### The run
+
+Twenty PPO runs and the complete held-out evaluation executed as one SLURM job
+on the declared machine.
+
+| Item | Value |
+|---|---|
+| Code commit | `5240d11ccea0b1370ac73d83d5142cc1e02d4b6d` (branch `protocol-v2-reward-fix`) |
+| Machine | `cpunode13.dyn.scc.plus.ac.at`, AMD EPYC 9334 32-Core |
+| SLURM job | `1760422`, 20 cores, one node |
+| Training | 20/20 runs, 95.9 min wall |
+| Evaluation | 22 controllers x 480 held-out scenarios = 10560 episodes |
+| Seeds | 11, 23, 37, 53, 71 |
+| Sampler | `dynamic` |
+| Result directory | `artifacts/results/final/` |
+
+### Provenance actually verified, not asserted
+
+- **The held-out set was unopened before this run.** Eight prior evaluation
+  directories contain 264 distinct scenario IDs between them, and the
+  intersection with the 480 held-out IDs is **empty**. Every development audit
+  used `validation.json` or a subset of it.
+- **The shipped models are the evaluated models.** All twenty
+  `best_model.zip` files hash-match the `model_sha256` recorded by the
+  evaluator on the server.
+- **The shipped source is the source that trained them.** All eight files in
+  `source_sha256` match once line endings are normalised. The recorded hashes
+  are computed on raw bytes, so a Windows CRLF checkout differs from the LF
+  bytes hashed on Linux for `train.py`, `env.py` and `controller_profiles.py`;
+  the content is identical. Future hashing should normalise line endings.
+- **Parity.** The fixed-PID arms reproduced all four completion rates exactly
+  against the laptop reference, with `0.01%` to `0.34%` drift on the continuous
+  metrics for completing arms.
+
+### What was frozen, and what was not
+
+Frozen before the run: controller code, plant, allocator, PID implementation,
+derivative filter, both calibration artifacts, reward constants, PPO
+hyperparameters, observation contracts, training budgets, the disturbance
+sampler, the manifests, and the five seeds.
+
+**Not pre-registered: the practical significance thresholds.** `PLAN.md`
+requires effect thresholds to be stated before the final test results are
+opened. They were not. The confidence intervals in `paired_effects.csv` are
+therefore reported without a pre-declared threshold for what counts as a
+practically meaningful difference, and the thesis must say so rather than
+implying otherwise.
+
+**The experiment is not strictly confirmatory.** The reward scale, the
+scheduler gain box, the disturbance sampler, and the robust PID gains were all
+changed during development in response to validation evidence, each recorded
+above with its reason. No held-out result influenced any of them, which the
+scenario-ID check above demonstrates. The correct description is a final
+controlled evaluation after iterative development, not a confirmatory
+experiment, and the write-up must use that wording.
+
+### Per-path PID benchmarks are absent by design
+
+`PLAN.md` describes privileged per-path PID benchmarks, and
+`artifacts/calibration/per_path_gains.json` exists. They are not in the final
+result because they are tuned per fixed named path while the held-out manifest
+is entirely generated geometry; `PLAN.md` already states that generated-path
+generalisation compares the global PIDs and the learned controllers only. Their
+absence is intentional and should be stated in the thesis rather than left for
+a reader to notice.

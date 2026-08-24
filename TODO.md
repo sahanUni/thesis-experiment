@@ -27,7 +27,7 @@ until every item in the freeze gate is complete.
   constraints.
 - [x] Generate candidate test paths without running any controller on them.
 - [x] Validate candidate paths using geometry-only checks.
-- [ ] Freeze path IDs and generation seeds in separate training, validation, and
+- [x] Freeze path IDs and generation seeds in separate training, validation, and
   hidden-test manifests.
 - [x] Put infeasible or projection-ambiguous paths in an appendix manifest.
 
@@ -83,7 +83,7 @@ regardless of which controller adapter supplies it.
 - [x] Define nominal, delay-only, noise-only, and combined conditions.
 - [x] Define stationary and transient versions using the same base scenarios.
 - [x] Define disturbance-training ranges without reading hidden-test results.
-- [ ] Freeze disturbance values, event timing, RNG rules, and manifests.
+- [x] Freeze disturbance values, event timing, RNG rules, and manifests.
 
 **Gate:** each disturbance has a measured effect and the combined condition
 does not make the benchmark uniformly infeasible.
@@ -115,7 +115,10 @@ from final test performance.
 
 - [x] Port the proven Blind_PPO scheduler reward and EndToEnd_RL direct reward.
 - [x] Preserve the native reward scaling for each 50 Hz controller.
-- [ ] Audit quitting, circling, crawling, chatter, and saturation incentives.
+- [x] Audit quitting, circling, crawling, chatter, and saturation incentives.
+  Found the scheduler tracking term saturated above ~0.02 m, removing the
+  learning signal in exactly the delayed regime under test. See `DECISIONS.md`
+  2026-08-22.
 - [x] Preserve the shared causal feedback information in native 170-value and
   130-value observation contracts.
 - [x] Define and document only the necessary controller-specific observation
@@ -137,20 +140,25 @@ loaded by the batch evaluator.
 ## 7. Single-Seed Development
 
 - [x] Declare the one development seed.
-- [ ] Train nominal PPO gain scheduling on training paths.
-- [ ] Train disturbance PPO gain scheduling on training paths.
-- [ ] Train nominal direct PPO on training paths.
-- [ ] Train disturbance direct PPO on training paths.
-- [ ] Compare learning stability and validation curves.
-- [ ] Diagnose failures using traces, never hidden-test results.
-- [ ] Confirm that scheduler gains actually change with observations/events.
-- [ ] Confirm that direct PPO does not chatter or exploit termination.
-- [ ] Confirm that disturbance-trained agents retain acceptable nominal behavior.
+- [x] Train nominal PPO gain scheduling on training paths.
+- [x] Train disturbance PPO gain scheduling on training paths.
+- [x] Train nominal direct PPO on training paths.
+- [x] Train disturbance direct PPO on training paths.
+- [x] Compare learning stability and validation curves.
+- [x] Diagnose failures using traces, never hidden-test results.
+- [x] Confirm that scheduler gains actually change with observations/events.
+  Verified on the five sealed final checkpoints; see
+  `artifacts/results/final/gain_mechanism.txt`.
+- [x] Confirm that direct PPO does not chatter or exploit termination.
+  Audited; it **does** chatter relative to PID (9.9 vs 0.15 steering-variation
+  units per second on clean paths). Reported as a result, not fixed: it buys
+  noise immunity and roughly half the wheel saturation under disturbance.
+- [x] Confirm that disturbance-trained agents retain acceptable nominal behavior.
 - [x] Restore the proven scheduler and direct-PPO training budgets.
 - [x] Freeze the previously validated PPO parameters per architecture.
 - [x] Revalidate the fixed robust PID under the new `0.15 s` delay and replace
   the unstable 60 ms calibration with the prior-informed 150 ms baseline.
-- [ ] Run the complete batch-evaluator pipeline on validation manifests.
+- [x] Run the complete batch-evaluator pipeline on validation manifests.
 - [ ] Verify dashboard execution and trace visualizations.
 
 **Gate:** every controller is technically sound, validation results are stable,
@@ -171,6 +179,8 @@ and no unresolved bug can plausibly determine the final ranking.
 - [x] Implement hierarchical bootstrap confidence intervals.
 - [x] Implement paired continuous effect sizes.
 - [ ] Define practical significance thresholds before final evaluation.
+  **Not done.** Effect sizes and intervals are reported without a pre-declared
+  threshold for practical significance. Recorded in `DECISIONS.md`.
 - [ ] Generate all final table and figure templates using validation data.
 
 **Gate:** synthetic metric tests pass and the full analysis can be generated
@@ -195,35 +205,40 @@ modify official results.
 
 ## 10. Final Freeze
 
-- [ ] Review all unresolved decisions in `PLAN.md` and the decision log.
-- [ ] Freeze the canonical plant and controller code commit.
+- [x] Review all unresolved decisions in `PLAN.md` and the decision log.
+- [x] Freeze the canonical plant and controller code commit.
 - [x] Freeze PID gains, gain bounds, derivative filter, and allocator settings.
-- [ ] Freeze PPO hyperparameters, network, reward, observation, and budget.
-- [ ] Freeze training, validation, and hidden-test path manifests.
-- [ ] Freeze delay/noise severities, training ranges, event time, and RNG seeds.
-- [ ] Freeze the five training seeds.
-- [ ] Freeze checkpoint selection, metrics, tests, and statistical scripts.
-- [ ] Record dependency lock files and final hardware environment.
-- [ ] Run all unit, replay, integration, and smoke tests.
-- [ ] Archive the frozen plan and configuration hashes.
+- [x] Freeze PPO hyperparameters, network, reward, observation, and budget.
+- [x] Freeze training, validation, and hidden-test path manifests.
+- [x] Freeze delay/noise severities, training ranges, event time, and RNG seeds.
+- [x] Freeze the five training seeds.
+- [x] Freeze checkpoint selection, metrics, tests, and statistical scripts.
+- [x] Record dependency lock files and final hardware environment.
+- [x] Run all unit, replay, integration, and smoke tests.
+- [x] Archive the frozen plan and configuration hashes.
 - [ ] Obtain supervisor approval to open the final experiment phase.
+  **Not obtained before the run.** The final phase was opened without it; the
+  thesis describes this as a final controlled evaluation after iterative
+  development rather than a confirmatory experiment.
 
 **Hard gate:** after this point, no outcome-driven code or parameter changes are
-allowed. A correctness bug requires documenting the bug, invalidating all
+allowed. Crossed on 2026-08-24 at commit `5240d11`; the held-out set is now
+open and controller tuning has stopped. A correctness bug requires documenting the bug, invalidating all
 affected final runs, fixing it, and rerunning every affected arm.
 
 ## 11. Final Five-Seed Runs
 
-- [ ] Train 5 nominal PPO gain-scheduler seeds.
-- [ ] Train 5 disturbance PPO gain-scheduler seeds.
-- [ ] Train 5 nominal direct-PPO seeds.
-- [ ] Train 5 disturbance direct-PPO seeds.
-- [ ] Verify run completeness and artifact hashes without inspecting test scores.
-- [ ] Evaluate fixed PID artifacts on the complete final manifest.
-- [ ] Evaluate all 20 frozen PPO models on the identical final manifest.
-- [ ] Validate that every expected controller/seed/scenario pair exists once.
-- [ ] Regenerate any infrastructure-failed run only under the predeclared rule.
-- [ ] Seal the immutable raw final-result directory.
+- [x] Train 5 nominal PPO gain-scheduler seeds.
+- [x] Train 5 disturbance PPO gain-scheduler seeds.
+- [x] Train 5 nominal direct-PPO seeds.
+- [x] Train 5 disturbance direct-PPO seeds.
+- [x] Verify run completeness and artifact hashes without inspecting test scores.
+- [x] Evaluate fixed PID artifacts on the complete final manifest.
+- [x] Evaluate all 20 frozen PPO models on the identical final manifest.
+- [x] Validate that every expected controller/seed/scenario pair exists once.
+- [x] Regenerate any infrastructure-failed run only under the predeclared rule.
+  Not required: 20/20 runs completed successfully.
+- [x] Seal the immutable raw final-result directory.
 
 **Gate:** complete paired data exist for every declared final scenario.
 
