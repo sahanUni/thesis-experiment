@@ -409,3 +409,57 @@ is entirely generated geometry; `PLAN.md` already states that generated-path
 generalisation compares the global PIDs and the learned controllers only. Their
 absence is intentional and should be stated in the thesis rather than left for
 a reader to notice.
+
+## 2026-08-24: The scheduler mechanism, measured on the sealed final models
+
+An earlier note recorded that the scheduler "wins by fine modulation around a
+low gain, not by switching operating points." **That was measured on the
+single-seed protocol v4 model and is wrong for the final five.** The finding is
+withdrawn and replaced by the following, measured on the sealed checkpoints
+over 12 clean and 12 transient-combined held-out scenarios per seed.
+
+### The disturbance-trained scheduler does switch
+
+| seed | clean `Kp` | post-event `Kp` | clean `J_FA` | transient combined `J_FA` |
+|---:|---:|---:|---:|---:|
+| 11 | `9.71` | `11.51` | `2.05 mm` | `9.14 mm` |
+| 23 | `225.56` | `39.02` | `1.16 mm` | `15.99 mm` |
+| 37 | `38.49` | `6.23` | `1.32 mm` | `7.59 mm` |
+| 53 | `35.76` | `8.76` | `1.41 mm` | `8.72 mm` |
+| 71 | `27.39` | `15.70` | `1.53 mm` | `10.35 mm` |
+| | | | PID nominal `1.16` | PID robust `9.10` |
+
+Four of five seeds reduce `Kp` after the disturbance appears, and seed 23 runs
+the full intended strategy: `Kp = 225` while clean, which reproduces the nominal
+PID's `1.16 mm` exactly, dropping to `39` once delayed.
+
+### Post-event gain almost perfectly predicts delayed error
+
+`corr(post-event Kp, transient combined J_FA) = +0.998` across the five seeds.
+The seeds that settle near the robust-PID optimum of `Kp = 8` achieve the
+lowest delayed error; seed 23, which only reaches `39`, is the worst. Delayed
+performance is therefore explained almost entirely by how close the policy gets
+to the known optimal gain, not by how much it modulates.
+
+This is post-hoc analysis on an opened test set with five points. It explains
+the observed spread; it is not a pre-registered hypothesis test, and the thesis
+must present it as mechanism rather than confirmation.
+
+### Seed 37 is an existence proof, and the reliability finding
+
+Seed 37 beats the robust PID on **both** axes: `1.32 mm` against `2.29 mm`
+clean, and `7.59 mm` against `9.10 mm` under transient combined disturbance. So
+gain scheduling can dominate a strongly tuned fixed PID; it is not a ceiling
+effect.
+
+What fails is reproducibility. The same training procedure, differing only in
+seed, produces clean-path `Kp` between `9.7` and `225.6` -- a standard deviation
+of `89` on a `5-300` box. The aggregate five-seed result is a tie with the
+robust PID because the procedure sometimes finds the good policy and sometimes
+does not.
+
+The honest conclusion is therefore not that classical control wins, nor that
+learned scheduling wins. It is that learned gain scheduling **can** beat a
+strongly tuned PID on both nominal accuracy and delay robustness, but PPO's
+seed variance makes it do so unreliably. The engineering barrier this
+experiment identifies is training reproducibility, not the control concept.
