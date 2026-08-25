@@ -283,3 +283,50 @@ def test_the_gain_chart_skips_arms_that_have_no_gains() -> None:
     ]
     figure = dashboard.comparison_figure(results, scenario_stub, "kp", "gains", "Kp")
     assert [trace.name for trace in figure.data] == ["Scheduled PPO — disturbed · seed 11"]
+
+
+def test_every_slider_accepts_its_own_full_track(
+    runner: dashboard.InteractiveRunner,
+) -> None:
+    """The slider bound and the validator behind it must be the same number.
+
+    They were not: the dead-time track ran to 300 ms while the validator
+    rejected anything over 200, so the top third of the track raised an error
+    instead of running an episode.
+    """
+    bounds = {control[0]: (control[2], control[3]) for control in dashboard.SCENARIO_CONTROLS}
+    scenario = runner.scenario_from_controls(
+        dashboard.path_value({"kind": "arc"}),
+        0.5,
+        "combined",
+        "transient",
+        bounds["delay"][1],
+        bounds["noise"][1],
+        bounds["event-time"][1],
+        bounds["seed"][1],
+    )
+    assert scenario.events[0].value == pytest.approx(0.001 * bounds["delay"][1])
+    assert scenario.events[1].value == pytest.approx(0.001 * bounds["noise"][1])
+
+
+@pytest.mark.parametrize(
+    ("field", "over"),
+    (("delay", dashboard.DELAY_MAX_MS + 1.0), ("noise", dashboard.NOISE_MAX_MM + 1.0)),
+)
+def test_past_the_track_is_still_rejected(
+    runner: dashboard.InteractiveRunner, field: str, over: float
+) -> None:
+    values = {"delay": 0.0, "noise": 0.0}
+    values[field] = over
+    with pytest.raises(ValueError):
+        runner.scenario_from_controls(
+            dashboard.path_value({"kind": "arc"}), 0.5, "combined", "transient",
+            values["delay"], values["noise"], 3.0, 1,
+        )
+
+
+def test_the_declared_severity_is_marked_on_a_long_track() -> None:
+    marks = dashboard._declared_mark(0.0, dashboard.NOISE_MAX_MM, 0.3)
+    assert list(marks) == [0.3]
+    # A default sitting on a bound would only restate the label already there.
+    assert dashboard._declared_mark(0.0, 200.0, 0.0) == {}

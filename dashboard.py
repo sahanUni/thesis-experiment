@@ -95,10 +95,23 @@ DEFAULT_CALIBRATION = config.ROOT / "artifacts" / "calibration" / "calibration.j
 # 0.15 s and that is the number the experiment reports, but the interesting
 # question at a viva is where the fixed PID actually breaks, and that is only
 # answerable if the slider goes further than the protocol does.
+# Named because the slider and the validator behind it must agree. They did not:
+# the slider offered 300 ms of dead time and the validator rejected anything over
+# 200, so the top third of the track produced an error instead of an episode.
+#
+# Neither ceiling is a plant limit. The dead-time queue in env.py resizes to
+# whatever it is given, and sensor noise perturbs only the e_ct the controller
+# reads. They are the range worth exploring: 400 ms is over two and a half times
+# the declared severity, and 200 mm of noise is a fifth of the corridor, which is
+# far past the point where the measurement stops being informative.
+DELAY_MAX_MS = 400.0
+NOISE_MAX_MM = 200.0
+EVENT_START_MAX_S = 60.0
+
 SCENARIO_CONTROLS = (
-    ("delay", "Dead time (ms)", 0.0, 300.0, 1.0, 1000.0 * CONFIG.delay_severity_s),
-    ("noise", "Sensor noise (mm)", 0.0, 5.0, 0.01, 1000.0 * CONFIG.noise_severity_m),
-    ("event-time", "Disturbance starts at (s)", 0.0, 60.0, 0.5, CONFIG.transient_start_s),
+    ("delay", "Dead time (ms)", 0.0, DELAY_MAX_MS, 1.0, 1000.0 * CONFIG.delay_severity_s),
+    ("noise", "Sensor noise (mm)", 0.0, NOISE_MAX_MM, 0.01, 1000.0 * CONFIG.noise_severity_m),
+    ("event-time", "Disturbance starts at (s)", 0.0, EVENT_START_MAX_S, 0.5, CONFIG.transient_start_s),
     ("seed", "Noise seed", 0.0, 100000.0, 1.0, 20260819.0 % 100000),
 )
 GAIN_LABELS = ("Kp", "Ki", "Kd")
@@ -384,9 +397,9 @@ class InteractiveRunner:
             raise ValueError("evaluation mode must be stationary or transient")
         speed = _number(target_speed, "target speed", 0.05, 5.0)
 
-        delay_s = 0.001 * _number(delay_ms, "dead time", 0.0, 200.0)
-        noise_m = 0.001 * _number(noise_mm, "sensor noise", 0.0, 5.0)
-        start_s = _number(event_time, "transient start", 0.0, 60.0)
+        delay_s = 0.001 * _number(delay_ms, "dead time", 0.0, DELAY_MAX_MS)
+        noise_m = 0.001 * _number(noise_mm, "sensor noise", 0.0, NOISE_MAX_MM)
+        start_s = _number(event_time, "transient start", 0.0, EVENT_START_MAX_S)
         # Bounded by the field, not by the slider: manifest seeds are
         # 20260819 + index, far outside the slider's convenience range, and
         # a scenario copied out of a manifest has to be reproducible here.
@@ -1221,6 +1234,18 @@ def interactive_view(
 # --- controls --------------------------------------------------------------
 
 
+def _declared_mark(minimum: float, maximum: float, default: float) -> dict[float, Any]:
+    """A single labelled tick at the control's declared value.
+
+    Returned empty when the default sits on an end of the track, where the tick
+    would only restate the bound already printed there.
+    """
+    if not minimum < default < maximum:
+        return {}
+    style = {"color": MUTED, "fontSize": "10px", "whiteSpace": "nowrap"}
+    return {default: {"label": f"{default:g}", "style": style}}
+
+
 def slider_row(
     control_id: str, label: str, minimum: float, maximum: float, step: float, default: float
 ) -> html.Div:
@@ -1245,7 +1270,13 @@ def slider_row(
                 minimum, maximum, step,
                 value=default,
                 id=f"s-{control_id}",
-                marks=None,
+                # A tick at the value the protocol declares. The disturbance
+                # tracks are long enough that the declared severity is a
+                # fraction of a percent along -- 0.3 mm of noise on a 200 mm
+                # track is not findable by dragging -- and without the tick
+                # there is nothing to say which part of the range is the
+                # experiment and which part is exploration past it.
+                marks=_declared_mark(minimum, maximum, default),
                 tooltip={"placement": "bottom", "always_visible": False},
             ),
         ],
@@ -1387,9 +1418,15 @@ def create_app(
                         className="selector",
                     ),
                     html.Div(
-                        "Dead time queues the wheel command; sensor noise corrupts only "
-                        "the e_ct the PID reads, never the score. Both are ignored by a "
-                        "nominal condition.",
+                        "Dead time queues the wheel command; sensor noise is the "
+                        "standard deviation in millimetres of the corruption applied "
+                        "to the e_ct the controller reads, never to the score. Both "
+                        "are ignored by a nominal condition. The tick on each track "
+                        f"marks the declared severity "
+                        f"({1000.0 * CONFIG.delay_severity_s:g} ms and "
+                        f"{1000.0 * CONFIG.noise_severity_m:g} mm); past it you are "
+                        "exploring, not reproducing. Type in the box for a value the "
+                        "track is too long to drag to.",
                         className="group-hint",
                     ),
                     *[slider_row(*control) for control in SCENARIO_CONTROLS],
