@@ -75,32 +75,30 @@ the code, budget, gains, severities, manifests, and seeds before the final run.
   --run-id final
 ```
 
-6. Generate paired effect intervals and view the immutable results:
+6. Generate paired effect intervals:
 
 ```powershell
 ..\venv\Scripts\python.exe analyze.py `
   --episodes artifacts\results\final\episodes.csv
-..\venv\Scripts\python.exe dashboard.py `
-  --results artifacts\results\final
 ```
 
-The dashboard has two tabs. **Batch results** reads the immutable directory given
-by `--results`, and is the only tab whose numbers are official. **Interactive**
-builds a `scenarios.Scenario` from the drawer controls and runs it on demand
-through the same `rollout.run_episode` the evaluator uses, so a scenario replayed
-there reproduces the batch trace sample for sample — asserted by
-`tests/test_dashboard.py`. Interactive runs write nothing.
-
-`--results` is optional; without it only the interactive tab has content. PPO
-artifacts are discovered under `--models-root` (default
-`artifacts/models/protocol_v2`), and
-`--calibration` defaults to `artifacts/calibration/calibration.json`, falling back
-to the development gain box with a visible warning when that file does not exist
-yet:
+`analyze.py` is where official numbers come from. The dashboard is the
+exploratory counterpart: it builds a `scenarios.Scenario` from the drawer
+controls and runs it on demand through the same `rollout.run_episode` the
+evaluator uses, so a scenario replayed there reproduces the batch trace sample
+for sample -- asserted by `tests/test_dashboard.py`. It writes nothing.
 
 ```powershell
 ..\venv\Scripts\python.exe dashboard.py
 ```
+
+Fixed PID, scheduled PPO and direct RL are picked one row each in the drawer
+and overlaid on shared axes: tracking error, the dead time actually in force,
+the steering yaw rate delivered to the plant, the wheel differential against
+its saturation bounds, and Kp. PPO artifacts are discovered under
+`--models-root` (default `artifacts/models/final`), and `--calibration`
+defaults to `artifacts/calibration/calibration.json`, falling back to the
+development gain box with a visible warning when that file does not exist yet.
 
 ## Artifacts
 

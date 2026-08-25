@@ -294,7 +294,7 @@ Then, on the laptop:
 
 ```powershell
 ..\venv\Scripts\python.exe analyze.py --episodes artifacts\results\final\episodes.csv
-..\venv\Scripts\python.exe dashboard.py --results artifacts\results\final
+..\venv\Scripts\python.exe dashboard.py
 ```
 
 ## Troubleshooting

@@ -10,7 +10,6 @@ breaking that silently.
 
 from __future__ import annotations
 
-import csv
 import json
 import sys
 from pathlib import Path
@@ -83,7 +82,7 @@ def test_scenario_matches_manifest_construction() -> None:
     assert built.geometry == reference.geometry
 
 
-def test_interactive_run_matches_batch_evaluator(
+def test_interactive_run_matches_the_batch_evaluator(
     runner: dashboard.InteractiveRunner, scenario: Scenario
 ) -> None:
     """The replay-equivalence gate: same scenario, same trace, sample for sample."""
@@ -157,106 +156,6 @@ def test_allocation_spans_are_merged() -> None:
     spans = dashboard._allocation_spans(rows)
     assert len(spans) == 2
     assert spans[0][0] == pytest.approx(0.02)
-
-
-# --- batch tab -------------------------------------------------------------
-
-
-def _write_results(directory: Path) -> Path:
-    """A minimal but realistic results directory, including a ragged arm.
-
-    `pid_per_path_nominal` deliberately has no row for the second scenario, the
-    way evaluate.py skips a scenario whose path kind has no calibrated gains.
-    """
-    directory.mkdir(parents=True, exist_ok=True)
-    manifest = ScenarioManifest(
-        name="test",
-        split="train",
-        scenarios=(
-            Scenario(
-                scenario_id="train-arc-v0.5-stationary-nominal",
-                path={"kind": "arc"},
-                target_speed=0.5,
-                evaluation_mode="stationary",
-                condition="nominal",
-                noise_seed=1,
-            ),
-            Scenario(
-                scenario_id="train-slalom-v0.5-stationary-nominal",
-                path={"kind": "slalom"},
-                target_speed=0.5,
-                evaluation_mode="stationary",
-                condition="nominal",
-                noise_seed=2,
-            ),
-        ),
-    )
-    manifest.save(directory / "scenario_manifest.json")
-    rows = [
-        {
-            "controller": controller,
-            "training_seed": "",
-            "evaluation_mode": "stationary",
-            "condition": "nominal",
-            "path_kind": kind,
-            "target_speed": "0.5",
-            "scenario_id": f"train-{kind}-v0.5-stationary-nominal",
-            "finished": "True",
-            "failure_adjusted_error_m": "0.0123",
-            "mean_distance_m": "0.0100",
-            "max_distance_m": "0.0300",
-            "progress_pct": "100.0",
-            "duration_s": "12.5",
-        }
-        for kind in ("arc", "slalom")
-        for controller in ("pid_global_nominal", "pid_per_path_nominal")
-        if not (controller == "pid_per_path_nominal" and kind == "slalom")
-    ]
-    with (directory / "episodes.csv").open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
-        writer.writeheader()
-        writer.writerows(rows)
-    return directory
-
-
-def test_load_batch_reads_controllers_and_scenarios(tmp_path: Path) -> None:
-    batch = dashboard.load_batch(_write_results(tmp_path / "run"))
-    assert batch["controllers"] == ["pid_global_nominal", "pid_per_path_nominal"]
-    assert len(batch["scenarios"]) == 2
-    assert batch["specs"]["train-arc-v0.5-stationary-nominal"] == {"kind": "arc"}
-
-
-def test_batch_view_reports_a_missing_combination_instead_of_raising(tmp_path: Path) -> None:
-    """The regression this replaces used to 500 the whole page."""
-    batch = dashboard.load_batch(_write_results(tmp_path / "run"))
-    view = dashboard.batch_view(
-        batch["root"], batch["episodes"], batch["specs"],
-        "pid_per_path_nominal", "train-slalom-v0.5-stationary-nominal",
-    )
-    assert "has no result for" in str(view)
-
-
-def test_batch_view_renders_without_traces(tmp_path: Path) -> None:
-    batch = dashboard.load_batch(_write_results(tmp_path / "run"))
-    view = dashboard.batch_view(
-        batch["root"], batch["episodes"], batch["specs"],
-        "pid_global_nominal", "train-arc-v0.5-stationary-nominal",
-    )
-    assert "No trace saved" in str(view)
-
-
-def test_empty_results_directory_is_rejected(tmp_path: Path) -> None:
-    empty = tmp_path / "empty"
-    empty.mkdir()
-    with pytest.raises(ValueError, match="no episodes.csv"):
-        dashboard.load_batch(empty)
-
-
-def test_unsafe_identifiers_are_rejected() -> None:
-    with pytest.raises(ValueError, match="unsafe path characters"):
-        dashboard.validate_batch_rows(
-            [{"controller": "../escape", "scenario_id": "ok", "training_seed": ""}]
-        )
 
 
 def test_app_builds_without_models_or_calibration() -> None:
@@ -384,25 +283,3 @@ def test_the_gain_chart_skips_arms_that_have_no_gains() -> None:
     ]
     figure = dashboard.comparison_figure(results, scenario_stub, "kp", "gains", "Kp")
     assert [trace.name for trace in figure.data] == ["Scheduled PPO — disturbed · seed 11"]
-
-
-def test_a_batch_run_is_plotted_against_the_gain_box_that_produced_it(tmp_path: Path) -> None:
-    """Old runs carry their own scheduler box; the box moved mid-project."""
-    results = tmp_path / "run"
-    results.mkdir()
-    (results / "scheduler_calibration.json").write_text(
-        json.dumps(
-            {
-                "nominal": {"kp": 26.0, "ki": 0.5, "kd": 4.4},
-                "robust": {"kp": 26.0, "ki": 0.5, "kd": 4.4},
-                "lower": {"kp": 5.0, "ki": 0.0, "kd": 2.5},
-                "upper": {"kp": 300.0, "ki": 1.5, "kd": 6.0},
-            }
-        ),
-        encoding="utf-8",
-    )
-    assert dashboard._batch_gain_box(results).upper.kp == 300.0
-    # A results directory without one still renders, on the documented default.
-    assert dashboard._batch_gain_box(tmp_path / "absent").upper.kp == (
-        GainCalibration.development_default().upper.kp
-    )

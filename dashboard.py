@@ -1,19 +1,18 @@
-"""Interactive scenario runner and read-only batch-artifact viewer.
+"""Interactive runner for the three-way controller comparison.
 
-Two tabs, and the difference between them is the whole point:
+Fixed PID, scheduled PPO and direct RL on one plant, one path and one
+disturbance, driven from the drawer and overlaid on shared axes.
 
-  Interactive  runs episodes here and now from the controls in the drawer.
-               Nothing it produces is an official result, and it never writes
-               into an artifact directory (DECISIONS.md).
-  Batch        reads an immutable `artifacts/results/<run-id>` directory
-               produced by evaluate.py. Official numbers come only from there
-               (PLAN.md).
+Nothing this page produces is an official result and it never writes into an
+artifact directory (DECISIONS.md); every number in the thesis comes from
+evaluate.py (PLAN.md). It once carried a second tab that read those frozen
+artifacts back, which is a job `analyze.py` does better and without a browser.
 
-Every interactive episode is built as a real `scenarios.Scenario` and run
-through `rollout.run_episode` -- the same two objects the batch evaluator uses.
-That is deliberate: a dashboard with its own private episode loop would drift
-from the evaluator, and the replay-equivalence gate in TODO.md section 9 could
-never be met. `tests/test_dashboard.py` asserts the two agree sample for sample.
+Every episode is built as a real `scenarios.Scenario` and run through
+`rollout.run_episode` -- the same two objects the batch evaluator uses. That is
+deliberate: a dashboard with its own private episode loop would drift from the
+evaluator, and the replay-equivalence gate in TODO.md section 9 could never be
+met. `tests/test_dashboard.py` asserts the two agree sample for sample.
 
 The visual system is ported from Path_Following_PPO so the two projects read
 the same way.
@@ -22,7 +21,6 @@ the same way.
 from __future__ import annotations
 
 import argparse
-import csv
 import json
 import math
 import re
@@ -42,7 +40,7 @@ from config import CONFIG, PATH_SPLITS
 from core import paths
 from env import PathFollowingEnv
 from rollout import run_episode
-from scenarios import CONDITIONS, DisturbanceEvent, Scenario, ScenarioManifest
+from scenarios import CONDITIONS, DisturbanceEvent, Scenario
 
 
 # --- palette ---------------------------------------------------------------
@@ -83,7 +81,6 @@ CORRIDOR_M = float(CONFIG.corridor_m)
 CORRIDOR_GRID = 240
 CORRIDOR_STRIDE = 5
 
-SAFE_COMPONENT = re.compile(r"^[a-zA-Z0-9_.-]+$")
 SAFE_ARM = re.compile(r"^[a-z0-9_]+$")
 
 # The sealed five-seed matrix the thesis reports. `protocol_v2` was the default
@@ -177,11 +174,6 @@ def _allocation_spans(rows: list[dict[str, Any]]) -> list[list[float]]:
         else:
             spans.append([moment, moment + step])
     return spans
-
-
-def load_rows(path: Path) -> list[dict[str, str]]:
-    with path.open(newline="", encoding="utf-8") as handle:
-        return list(csv.DictReader(handle))
 
 
 def path_label(spec: dict[str, Any]) -> str:
@@ -551,20 +543,61 @@ def _slugify(text: str) -> str:
 # --- figures ---------------------------------------------------------------
 
 
-def _base_figure(title: str, y_label: str, *, height: int, x_label: str) -> go.Figure:
+# The chart header is two stacked bands inside the top margin: the title on
+# the first line, the horizontal legend on the second. Plotly positions each
+# independently, so the two used to be given overlapping coordinates and the
+# title was drawn straight through the legend entries. These constants keep the
+# two apart in one place instead of at each of the nine call sites.
+TITLE_BAND_PX = 26
+LEGEND_BAND_PX = 30
+CHART_TOP_PX = TITLE_BAND_PX + LEGEND_BAND_PX
+
+
+def _base_figure(
+    title: str, y_label: str, *, height: int, x_label: str, legend_rows: int = 1
+) -> go.Figure:
+    top = TITLE_BAND_PX + LEGEND_BAND_PX * legend_rows
     figure = go.Figure()
     figure.update_layout(
         template="plotly_dark",
-        height=height,
-        margin=dict(l=55, r=15, t=42, b=40),
+        height=height + top - CHART_TOP_PX,
+        margin=dict(l=55, r=15, t=top, b=40),
         paper_bgcolor=PANEL,
         plot_bgcolor="#0a0f1a",
-        title=dict(text=title, x=0.01, font=dict(size=13, color=MUTED)),
+        # Pinned to the top of the figure container rather than floated above
+        # the plotting area, so it cannot drift down into the legend band when
+        # the margin changes.
+        title=dict(
+            text=title,
+            x=0.01,
+            xanchor="left",
+            y=1.0,
+            yanchor="top",
+            yref="container",
+            pad=dict(t=6),
+            font=dict(size=13, color=MUTED),
+        ),
         showlegend=False,
         hovermode="x unified",
     )
     figure.update_xaxes(title=x_label, gridcolor="#1e2a42", zeroline=False)
     figure.update_yaxes(title=y_label, gridcolor="#1e2a42", zeroline=False)
+    return figure
+
+
+def _show_legend(figure: go.Figure, *, x: float = 0.0) -> go.Figure:
+    """Turn the legend on in the band the top margin already reserved for it."""
+    figure.update_layout(
+        showlegend=True,
+        legend=dict(
+            orientation="h",
+            x=x,
+            xanchor="left",
+            y=1.0,
+            yanchor="bottom",
+            font=dict(size=10),
+        ),
+    )
     return figure
 
 
@@ -653,11 +686,8 @@ def trajectory_figure(
         x=[points[-1, 0]], y=[points[-1, 1]], mode="markers",
         marker=dict(color=WARN, size=10, symbol="square"), name="finish",
     )
-    figure.update_layout(
-        hovermode="closest",
-        showlegend=True,
-        legend=dict(orientation="h", y=1.12, x=0.0, font=dict(size=10)),
-    )
+    figure.update_layout(hovermode="closest")
+    _show_legend(figure)
     figure.update_yaxes(scaleanchor="x", scaleratio=1)
     return figure
 
@@ -688,10 +718,7 @@ def deviation_figure(rows: list[dict[str, Any]], scenario: Scenario) -> go.Figur
             line=dict(color=WARN, width=1.0), opacity=0.65,
             name="e_ct (what the PID reads)",
         )
-    figure.update_layout(
-        showlegend=True,
-        legend=dict(orientation="h", y=1.16, x=0.0, font=dict(size=10)),
-    )
+    _show_legend(figure)
     return figure
 
 
@@ -728,9 +755,7 @@ def speed_figure(rows: list[dict[str, Any]], scenario: Scenario) -> go.Figure:
         x=times, y=_values(rows, "speed_mps"), mode="lines",
         line=dict(color=GOOD, width=1.8), name="speed",
     )
-    figure.update_layout(
-        showlegend=True, legend=dict(orientation="h", y=1.18, x=0.18, font=dict(size=10))
-    )
+    _show_legend(figure, x=0.18)
     return figure
 
 
@@ -764,9 +789,7 @@ def command_figure(rows: list[dict[str, Any]]) -> go.Figure:
             x=times, y=values, mode="lines",
             line=dict(color=color, width=1.4, dash=dash), name=name,
         )
-    figure.update_layout(
-        showlegend=True, legend=dict(orientation="h", y=1.18, x=0.0, font=dict(size=10))
-    )
+    _show_legend(figure)
     return figure
 
 
@@ -795,9 +818,7 @@ def gain_figure(rows: list[dict[str, Any]], calibration: GainCalibration) -> go.
             x=times, y=_values(rows, key), mode="lines",
             line=dict(color=color, width=1.6), name=name,
         )
-    figure.update_layout(
-        showlegend=True, legend=dict(orientation="h", y=1.18, x=0.18, font=dict(size=10))
-    )
+    _show_legend(figure, x=0.18)
     return figure
 
 
@@ -825,9 +846,7 @@ def disturbance_figure(rows: list[dict[str, Any]], scenario: Scenario) -> go.Fig
         mode="lines", line=dict(color=NOISE_TINT, width=1.8, shape="hv"),
         name="sensor noise sigma (mm)",
     )
-    figure.update_layout(
-        showlegend=True, legend=dict(orientation="h", y=1.20, x=0.0, font=dict(size=10))
-    )
+    _show_legend(figure)
     return figure
 
 
@@ -898,10 +917,7 @@ def comparison_figure(
             x=0.5,
             y=0.5,
         )
-    figure.update_layout(
-        showlegend=True,
-        legend=dict(orientation="h", y=1.18, x=0.0, font=dict(size=10)),
-    )
+    _show_legend(figure)
     return figure
 
 
@@ -1202,184 +1218,6 @@ def interactive_view(
     )
 
 
-# --- batch tab -------------------------------------------------------------
-
-
-def controller_key(row: dict[str, str]) -> str:
-    seed = row.get("training_seed", "")
-    return f"{row['controller']}|{seed}" if seed else row["controller"]
-
-
-def validate_batch_rows(episodes: list[dict[str, str]]) -> None:
-    for row in episodes:
-        if not SAFE_COMPONENT.fullmatch(row["controller"]) or not SAFE_COMPONENT.fullmatch(
-            row["scenario_id"]
-        ):
-            raise ValueError("result identifiers contain unsafe path characters")
-        if row.get("training_seed") and not str(row["training_seed"]).isdigit():
-            raise ValueError("training seed must be an integer")
-
-
-def batch_overview_figure(peers: list[dict[str, str]]) -> go.Figure:
-    labels = [controller_key(row).replace("|", " / seed ") for row in peers]
-    colors = [CONTROLLER_COLORS[index % len(CONTROLLER_COLORS)] for index in range(len(peers))]
-    figure = _base_figure(
-        "every controller on this scenario", "", height=620, x_label=""
-    )
-    figure.add_bar(
-        x=[100.0 if str(row["finished"]).lower() == "true" else 0.0 for row in peers],
-        y=labels,
-        orientation="h",
-        marker_color=colors,
-        hovertemplate="%{y}<br>completion %{x:.0f}%<extra></extra>",
-        xaxis="x",
-        yaxis="y",
-    )
-    figure.add_bar(
-        x=[float(row["failure_adjusted_error_m"]) for row in peers],
-        y=labels,
-        orientation="h",
-        marker_color=colors,
-        customdata=[[row["progress_pct"]] for row in peers],
-        hovertemplate="%{y}<br>J_FA %{x:.5f} m<br>progress %{customdata[0]}%<extra></extra>",
-        xaxis="x2",
-        yaxis="y2",
-    )
-    figure.update_layout(
-        hovermode="closest",
-        xaxis=dict(domain=[0, 1], anchor="y", title="completion (%)", range=[0, 105]),
-        yaxis=dict(domain=[0.58, 1.0], anchor="x", automargin=True),
-        xaxis2=dict(
-            domain=[0, 1],
-            anchor="y2",
-            title="failure-adjusted error (m, log scale)",
-            type="log",
-        ),
-        yaxis2=dict(domain=[0.0, 0.42], anchor="x2", automargin=True),
-    )
-    return figure
-
-
-def batch_view(
-    results: Path,
-    episodes: list[dict[str, str]],
-    scenario_specs: dict[str, dict[str, Any]],
-    controller: str,
-    scenario_id: str,
-) -> html.Div:
-    peers = [row for row in episodes if row["scenario_id"] == scenario_id]
-    selected = next(
-        (row for row in peers if controller_key(row) == controller), None
-    )
-    graph = {"displaylogo": False, "responsive": True}
-    children: list[Any] = [
-        html.Section(
-            [
-                html.H2(
-                    [
-                        "Batch results",
-                        html.Span("official artifact", className="badge official"),
-                    ]
-                ),
-                html.P(f"{results}", className="run-label"),
-                dcc.Graph(figure=batch_overview_figure(peers), config=graph),
-            ],
-            className="comparison-panel overlay-panel",
-        )
-    ]
-    if selected is None:
-        # Not every controller ran every scenario: `pid_per_path_*` arms skip
-        # any scenario with no calibrated gains for that path kind. Selecting
-        # such a pair used to raise StopIteration inside the callback and take
-        # the whole page down with a 500.
-        children.append(
-            html.Div(
-                f"{controller} has no result for {scenario_id}. "
-                "Per-path PID arms only run scenarios whose path kind has calibrated gains.",
-                className="message error",
-            )
-        )
-        return html.Div(children)
-
-    trace_name = f"{selected['controller']}_seed{selected.get('training_seed') or 0}"
-    trace_path = results / "traces" / trace_name / f"{scenario_id}.csv"
-    panel: list[Any] = [
-        html.H2(selected["controller"]),
-        html.P(
-            f"{scenario_id}  ·  {selected.get('evaluation_mode', '?')}/"
-            f"{selected.get('condition', '?')}  ·  {selected.get('target_speed', '?')} m/s",
-            className="controller-note",
-        ),
-        headline_metrics(selected),
-        full_metrics(selected),
-    ]
-    if not trace_path.exists():
-        panel.append(
-            html.Div(
-                "No trace saved for this episode. Re-run evaluate.py with --save-traces "
-                "to plot it.",
-                className="message",
-            )
-        )
-    else:
-        rows = load_rows(trace_path)
-        spec = scenario_specs.get(scenario_id)
-        scenario = _batch_scenario(selected, spec, scenario_id)
-        panel += [
-            dcc.Graph(
-                figure=trajectory_figure(
-                    [{"trace": rows, "label": selected["controller"], "color": ACCENT}],
-                    scenario,
-                ),
-                config=graph,
-            ),
-            dcc.Graph(figure=deviation_figure(rows, scenario), config=graph),
-            dcc.Graph(figure=speed_figure(rows, scenario), config=graph),
-            dcc.Graph(figure=command_figure(rows), config=graph),
-            dcc.Graph(figure=gain_figure(rows, _batch_gain_box(results)), config=graph),
-            dcc.Graph(figure=disturbance_figure(rows, scenario), config=graph),
-        ]
-    children.append(html.Div([html.Section(panel, className="comparison-panel")], className="comparison-grid"))
-    return html.Div(children)
-
-
-def _batch_gain_box(results: Path) -> GainCalibration:
-    """The scheduler gain box that produced this run, not today's.
-
-    evaluate.py copies `scheduler_calibration.json` into every results
-    directory precisely so an old run can be read back correctly. Drawing its
-    gain traces against the current box would put the bounds in the wrong
-    place -- the box moved from Kp 10-50 to Kp 5-300 mid-project, and a policy
-    saturating its old ceiling would look like it was sitting mid-range.
-    """
-    candidate = results / "scheduler_calibration.json"
-    if candidate.is_file():
-        try:
-            return GainCalibration.load(candidate)
-        except (OSError, ValueError, KeyError, json.JSONDecodeError):
-            pass
-    return GainCalibration.development_default()
-
-
-def _batch_scenario(
-    row: dict[str, str], spec: dict[str, Any] | None, scenario_id: str
-) -> Scenario:
-    """Enough of a Scenario to draw the batch charts.
-
-    The manifest copied beside the results is authoritative; this rebuild is
-    only the fallback for a results directory whose manifest predates the
-    scenario it names.
-    """
-    return Scenario(
-        scenario_id=scenario_id,
-        path=spec or {"kind": row.get("path_kind", "arc")},
-        target_speed=float(row.get("target_speed") or 0.5),
-        evaluation_mode=row.get("evaluation_mode") or "stationary",
-        condition=row.get("condition") or "nominal",
-        noise_seed=0,
-    )
-
-
 # --- controls --------------------------------------------------------------
 
 
@@ -1445,7 +1283,6 @@ def path_options() -> list[dict[str, str]]:
 
 
 def create_app(
-    results: str | Path | None = None,
     models_root: str | Path | None = None,
     calibration_path: str | Path | None = None,
 ) -> Dash:
@@ -1455,29 +1292,30 @@ def create_app(
     gains = gain_controls(runner.calibration)
     all_controls = SCENARIO_CONTROLS + gains
 
-    batch: dict[str, Any] | None = None
-    batch_error = ""
-    if results is not None:
-        try:
-            batch = load_batch(Path(results))
-        except (OSError, ValueError, KeyError, json.JSONDecodeError) as error:
-            batch_error = f"Could not read {results}: {error}"
-
     options = path_options()
     controller_options = runner.controller_options()
     default_selection = runner.default_selection()
     app = Dash(__name__, title="Thesis Experiment")
     app.layout = html.Div(
         [
-            html.Button("☰  Controls", id="panel-toggle", className="panel-toggle", n_clicks=0),
+            # Hidden to start with, because the drawer starts open. Its
+            # visibility is the inverse of the drawer's, and `toggle_drawer`
+            # keeps the two in step from there.
+            html.Button(
+                "☰  Controls",
+                id="panel-toggle",
+                className="panel-toggle",
+                n_clicks=0,
+                style={"display": "none"},
+            ),
             html.Header(
                 [
                     html.H1("Thesis Experiment"),
                     html.P(
                         "Fixed PID, scheduled PPO and direct RL on one plant, one path "
                         "and one disturbance. Set the dead time and the sensor noise in "
-                        "the drawer, then run. The interactive tab produces nothing "
-                        "official; the batch tab reads a frozen evaluate.py artifact. "
+                        "the drawer, then run. Nothing this page produces is an "
+                        "official result: those come from evaluate.py alone. "
                         f"Gain box: {runner.calibration_label}.",
                         className="kicker",
                     ),
@@ -1557,26 +1395,38 @@ def create_app(
                     *[slider_row(*control) for control in SCENARIO_CONTROLS],
                     html.Div("Methods to compare", className="section-title"),
                     html.Div(
-                        "Tick one of each to see the three-way comparison. Ticking two "
-                        "seeds of the same method is how seed spread shows up.",
+                        "One row per method. Open a row to pick which trained "
+                        "artifact runs; picking two seeds of the same method is how "
+                        "seed spread shows up. An empty row sits the method out.",
                         className="group-hint",
                     ),
                     *[
                         html.Div(
                             [
                                 html.Label(METHOD_LABELS[method]),
+                                # A multi-select dropdown rather than a checklist:
+                                # ten seeds per learned method is ten permanent
+                                # rows of drawer, and the drawer is where the
+                                # disturbance sliders have to stay reachable. The
+                                # dropdown collapses to its chips and stays one
+                                # row tall however many artifacts exist.
+                                #
                                 # Always in the tree, even with no options: Dash
                                 # raises on a callback whose State id is absent,
                                 # so an untrained method would take the page down
-                                # rather than simply offer nothing to tick.
-                                dcc.Checklist(
+                                # rather than simply offer nothing to pick.
+                                dcc.Dropdown(
                                     id=f"select-{method}",
                                     options=controller_options[method],
                                     value=default_selection[method],
+                                    multi=True,
+                                    placeholder=(
+                                        "not compared"
+                                        if controller_options[method]
+                                        else "no trained artifact found"
+                                    ),
+                                    disabled=not controller_options[method],
                                 ),
-                                html.Div("no trained artifact found", className="group-hint")
-                                if not controller_options[method]
-                                else html.Div(),
                             ],
                             className="selector method-group",
                         )
@@ -1611,74 +1461,33 @@ def create_app(
                 id="controls-drawer",
                 className="controls panel drawer open",
             ),
-            # The batch selectors are always in the tree, even with no results
-            # directory, so their callback Inputs resolve. Dash raises on a
-            # callback whose Input id is absent from the layout, which would
-            # otherwise make --results optional in name only.
-            html.Section(
-                [
-                    html.Div(
-                        [
-                            html.Label("Batch controller"),
-                            dcc.Dropdown(
-                                id="batch-controller",
-                                options=(batch or {}).get("controllers", []),
-                                value=((batch or {}).get("controllers") or [None])[0],
-                                clearable=False,
-                            ),
-                        ]
-                    ),
-                    html.Div(
-                        [
-                            html.Label("Batch scenario"),
-                            dcc.Dropdown(
-                                id="batch-scenario",
-                                options=(batch or {}).get("scenarios", []),
-                                value=((batch or {}).get("scenarios") or [None])[0],
-                                clearable=False,
-                            ),
-                        ]
-                    ),
-                ],
-                id="batch-filters",
-                className="filters",
-                style={"display": "none"},
-            ),
-            html.Main(
-                [
-                    dcc.Tabs(
-                        id="view-tabs",
-                        value="interactive",
-                        className="tab-bar",
-                        children=[
-                            dcc.Tab(label="Interactive", value="interactive"),
-                            dcc.Tab(label="Batch results", value="batch"),
-                        ],
-                    ),
-                    html.Div(id="tab-content"),
-                ],
-                className="results",
-            ),
+            html.Main([html.Div(id="tab-content")], className="results"),
         ],
         className="app",
     )
 
     @app.callback(
         Output("controls-drawer", "className"),
+        Output("panel-toggle", "style"),
         Input("panel-toggle", "n_clicks"),
         Input("panel-close", "n_clicks"),
         State("controls-drawer", "className"),
         prevent_initial_call=True,
     )
     def toggle_drawer(_open_clicks: int, _close_clicks: int, current: str):
-        closed = "controls panel drawer"
-        if ctx.triggered_id == "panel-close":
-            return closed
-        return closed if "open" in (current or "") else f"{closed} open"
+        """Open and close the drawer, and hide the opener while it is open.
 
-    @app.callback(Output("batch-filters", "style"), Input("view-tabs", "value"))
-    def show_batch_filters(tab: str):
-        return {} if tab == "batch" and batch is not None else {"display": "none"}
+        The button sits over the masthead, so leaving it visible with the
+        drawer already open offers a control that does the same thing as the
+        ✕ two centimetres to its right. Driven from the callback rather than
+        from CSS because the open state lives in the className this same
+        callback owns.
+        """
+        closed = "controls panel drawer"
+        opening = ctx.triggered_id != "panel-close" and "open" not in (current or "")
+        if opening:
+            return f"{closed} open", {"display": "none"}
+        return closed, {}
 
     for control_id, _label, _minimum, _maximum, _step, _default in SCENARIO_CONTROLS:
         app.callback(
@@ -1718,10 +1527,7 @@ def create_app(
 
     @app.callback(
         Output("tab-content", "children"),
-        Input("view-tabs", "value"),
         Input("run-button", "n_clicks"),
-        Input("batch-controller", "value"),
-        Input("batch-scenario", "value"),
         State("path-select", "value"),
         State("speed-select", "value"),
         State("mode-select", "value"),
@@ -1738,24 +1544,12 @@ def create_app(
         State("s-gain-kd", "value"),
     )
     def render(
-        tab, run_clicks, batch_controller, batch_scenario,
+        run_clicks,
         path_spec, speed, evaluation_mode, condition,
         delay_ms, noise_mm, event_time, seed,
         pid_keys, scheduled_keys, direct_keys, kp, ki, kd,
     ):
         controller_keys = (pid_keys or []) + (scheduled_keys or []) + (direct_keys or [])
-        if tab == "batch":
-            if batch is None:
-                return html.Div(
-                    batch_error or "Start with --results <artifacts/results/RUN-ID> "
-                    "to inspect a batch artifact.",
-                    className="message" if not batch_error else "message error",
-                )
-            return batch_view(
-                batch["root"], batch["episodes"], batch["specs"],
-                batch_controller or batch["controllers"][0],
-                batch_scenario or batch["scenarios"][0],
-            )
         if not run_clicks:
             return html.Div(
                 "Choose a scenario and controllers in the drawer, then press "
@@ -1786,37 +1580,8 @@ def create_app(
     return app
 
 
-def load_batch(results: Path) -> dict[str, Any]:
-    """Read one immutable results directory. Nothing here ever writes."""
-    results = results.resolve()
-    episodes_path = results / "episodes.csv"
-    if not episodes_path.is_file():
-        raise ValueError("results directory has no episodes.csv")
-    episodes = load_rows(episodes_path)
-    if not episodes:
-        raise ValueError("episodes.csv is empty")
-    validate_batch_rows(episodes)
-    specs: dict[str, dict[str, Any]] = {}
-    manifest_path = results / "scenario_manifest.json"
-    if manifest_path.exists():
-        manifest = ScenarioManifest.load(manifest_path)
-        specs = {scenario.scenario_id: scenario.path for scenario in manifest.scenarios}
-    return {
-        "root": results,
-        "episodes": episodes,
-        "specs": specs,
-        "controllers": sorted({controller_key(row) for row in episodes}),
-        "scenarios": sorted({row["scenario_id"] for row in episodes}),
-    }
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--results",
-        default=None,
-        help="An artifacts/results/<run-id> directory to inspect in the batch tab.",
-    )
     parser.add_argument(
         "--models-root",
         default=str(DEFAULT_MODELS_ROOT),
@@ -1838,7 +1603,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    app = create_app(args.results, args.models_root, args.calibration)
+    app = create_app(args.models_root, args.calibration)
     app.run(host=args.host, port=args.port, debug=False)
 
 

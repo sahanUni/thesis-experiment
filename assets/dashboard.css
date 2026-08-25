@@ -404,32 +404,6 @@ h1 { margin: 0 0 .2rem; font-size: 1.5rem; }
 }
 
 .badge.interactive { border-color: #ffce6b; color: #ffce6b; }
-.badge.official { border-color: #66d9a3; color: #66d9a3; }
-
-.run-label { color: var(--muted); font: .76rem Consolas, monospace; }
-
-.tab-bar { margin-bottom: 1.1rem; }
-
-.filters {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  gap: .9rem;
-  margin-bottom: 1.1rem;
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--panel);
-}
-
-.filters label {
-  display: block;
-  margin-bottom: .45rem;
-  color: var(--muted);
-  font-size: .72rem;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-}
-
 /* The full metric table is wide; four fixed columns truncate it. */
 .metrics.wide { grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
 
@@ -515,4 +489,15 @@ h1 { margin: 0 0 .2rem; font-size: 1.5rem; }
 
 @media (max-width: 720px) {
   .scoreboard { display: block; overflow-x: auto; }
+}
+
+/* A method row's dropdown holds one chip per selected artifact. Left at the
+   Dash default the chips are the same colour as the field, so a row with three
+   seeds picked reads as one long unpunctuated string. */
+.method-group .dash-dropdown-value,
+.method-group [class*="multiValue"] {
+  border: 1px solid var(--line) !important;
+  border-radius: 5px !important;
+  background: var(--panel-2) !important;
+  color: var(--ink) !important;
 }
