@@ -451,3 +451,68 @@ h1 { margin: 0 0 .2rem; font-size: 1.5rem; }
 .overlay-panel h2 { margin: 0 0 .2rem; font-size: 1.05rem; }
 
 .dash-checklist-item-label, .dash-checklist label { color: var(--ink); }
+
+/* Method grouping and the comparison scoreboard -------------------------- */
+
+.method-group { margin-bottom: .55rem; }
+.method-group > label {
+  display: block;
+  margin-bottom: .3rem;
+  font: 600 .78rem/1 Inter, system-ui, sans-serif;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.advanced {
+  margin: .9rem 0 .2rem;
+  padding: .55rem .7rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.advanced > summary {
+  cursor: pointer;
+  font: 600 .78rem/1 Inter, system-ui, sans-serif;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.advanced[open] > summary { margin-bottom: .6rem; }
+
+.scoreboard {
+  width: 100%;
+  margin: .5rem 0 .9rem;
+  border-collapse: collapse;
+  font: .8rem/1.4 Inter, system-ui, sans-serif;
+}
+.scoreboard th,
+.scoreboard td {
+  padding: .38rem .6rem;
+  text-align: right;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.scoreboard th {
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .02em;
+}
+.scoreboard td { font-variant-numeric: tabular-nums; }
+.scoreboard th:first-child,
+.scoreboard .scoreboard-name { text-align: left; white-space: normal; }
+.scoreboard tbody tr:last-child td { border-bottom: none; }
+
+/* The swatch is the only thing tying a table row to its line in the charts
+   above, so it carries the method colour rather than a legend key. */
+.swatch {
+  display: inline-block;
+  width: .62rem;
+  height: .62rem;
+  margin-right: .45rem;
+  border-radius: 2px;
+  vertical-align: baseline;
+}
+
+@media (max-width: 720px) {
+  .scoreboard { display: block; overflow-x: auto; }
+}

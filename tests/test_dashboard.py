@@ -271,3 +271,138 @@ def test_discover_models_rejects_a_mismatched_metadata_mode(tmp_path: Path) -> N
     (seed_dir / "metadata.json").write_text(json.dumps({"mode": "direct"}), encoding="utf-8")
     with pytest.raises(ValueError, match="disagree"):
         dashboard.discover_models(tmp_path)
+
+
+# --- three-method comparison ------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("key", "expected"),
+    (
+        ("pid_global_robust", "pid"),
+        ("pid_custom", "pid"),
+        ("ppo_scheduler_disturbed:11", "scheduled"),
+        ("ppo_direct_nominal:71", "direct"),
+    ),
+)
+def test_method_is_derived_from_the_controller_key(key: str, expected: str) -> None:
+    assert dashboard.method_of(key) == expected
+
+
+def test_an_unknown_controller_key_has_no_method() -> None:
+    with pytest.raises(ValueError, match="no known method"):
+        dashboard.method_of("something_else")
+
+
+def test_results_come_back_in_method_order_whatever_order_was_ticked(
+    runner: dashboard.InteractiveRunner, scenario: Scenario
+) -> None:
+    """Selection order must not reorder the legend.
+
+    The charts overlay every controller on one axis, so a legend that reshuffles
+    when a checkbox is re-ticked makes two screenshots of the same comparison
+    disagree about which line is which.
+    """
+    results = runner.run(scenario, ["pid_custom", "pid_global_robust"], (26.0, 0.5, 4.4))
+    assert [result["method"] for result in results] == ["pid", "pid"]
+    assert [result["color"] for result in results] == list(
+        dashboard.METHOD_COLORS["pid"][:2]
+    )
+
+
+def test_every_method_keeps_its_own_hue(
+    runner: dashboard.InteractiveRunner, scenario: Scenario
+) -> None:
+    results = runner.run(scenario, ["pid_global_nominal", "pid_global_robust"], (26.0, 0.5, 4.4))
+    for result in results:
+        assert result["color"] in dashboard.METHOD_COLORS[result["method"]]
+        assert result["label"].startswith(dashboard.METHOD_LABELS["pid"])
+
+
+def test_the_default_selection_offers_the_plain_pid_baseline() -> None:
+    selection = dashboard.InteractiveRunner().default_selection()
+    assert selection["pid"] == ["pid_global_robust"]
+    assert set(selection) == set(dashboard.METHOD_ORDER)
+
+
+def test_direct_rl_is_not_credited_with_a_steady_gain() -> None:
+    """env.py records gain_total_variation_per_s as 0.0 for direct mode.
+
+    Printed as a number that reads as perfect gain discipline, which inverts the
+    truth: the arm schedules no gain at all.
+    """
+    table = dashboard.scoreboard(
+        [
+            {
+                "method": "direct",
+                "label": "Direct RL — disturbed · seed 11",
+                "color": "#c792ea",
+                "metrics": {
+                    "finished": True,
+                    "failure_adjusted_error_m": 0.0066,
+                    "mean_distance_m": 0.012,
+                    "max_distance_m": 0.03,
+                    "steer_total_variation_per_s": 1.04,
+                    "gain_total_variation_per_s": 0.0,
+                },
+            }
+        ]
+    )
+    cells = [cell.children for cell in table.children[1].children[0].children]
+    assert "n/a" in cells
+    assert "6.60" in cells  # J_FA reported in millimetres, not metres
+
+
+def test_the_steering_differential_is_derived_from_the_applied_commands() -> None:
+    rows = [
+        {"t": 0.0, "u_left_applied": 0.4, "u_right_applied": 0.1},
+        {"t": 0.02, "u_left_applied": -0.2, "u_right_applied": 0.3},
+    ]
+    assert dashboard._derive(rows, "steer_differential") == pytest.approx([0.3, -0.5])
+    assert dashboard._derive([{"actuator_delay_s": 0.15}], "delay_ms") == pytest.approx([150.0])
+
+
+def test_the_gain_chart_skips_arms_that_have_no_gains() -> None:
+    """A direct-mode trace carries no kp column and must not fake one."""
+    scenario_stub = Scenario(
+        scenario_id="stub", path={"kind": "arc"}, target_speed=0.5,
+        evaluation_mode="stationary", condition="nominal", noise_seed=0,
+    )
+    results = [
+        {
+            "method": "scheduled",
+            "label": "Scheduled PPO — disturbed · seed 11",
+            "color": "#4fc3f7",
+            "trace": [{"t": 0.0, "kp": 26.0}, {"t": 0.02, "kp": 30.0}],
+        },
+        {
+            "method": "direct",
+            "label": "Direct RL — disturbed · seed 11",
+            "color": "#c792ea",
+            "trace": [{"t": 0.0}, {"t": 0.02}],
+        },
+    ]
+    figure = dashboard.comparison_figure(results, scenario_stub, "kp", "gains", "Kp")
+    assert [trace.name for trace in figure.data] == ["Scheduled PPO — disturbed · seed 11"]
+
+
+def test_a_batch_run_is_plotted_against_the_gain_box_that_produced_it(tmp_path: Path) -> None:
+    """Old runs carry their own scheduler box; the box moved mid-project."""
+    results = tmp_path / "run"
+    results.mkdir()
+    (results / "scheduler_calibration.json").write_text(
+        json.dumps(
+            {
+                "nominal": {"kp": 26.0, "ki": 0.5, "kd": 4.4},
+                "robust": {"kp": 26.0, "ki": 0.5, "kd": 4.4},
+                "lower": {"kp": 5.0, "ki": 0.0, "kd": 2.5},
+                "upper": {"kp": 300.0, "ki": 1.5, "kd": 6.0},
+            }
+        ),
+        encoding="utf-8",
+    )
+    assert dashboard._batch_gain_box(results).upper.kp == 300.0
+    # A results directory without one still renders, on the documented default.
+    assert dashboard._batch_gain_box(tmp_path / "absent").upper.kp == (
+        GainCalibration.development_default().upper.kp
+    )

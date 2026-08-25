@@ -54,7 +54,28 @@ PATH_COLOR = "#8b97ad"
 # One per controller panel, in load order. Distinct enough to tell four
 # trajectories apart on one corridor plot.
 CONTROLLER_COLORS = ("#4fc3f7", "#c792ea", "#ffb26b", "#6bd6c4", "#ff8fa3", "#a3e635")
-DELAY_TINT, NOISE_TINT = "#c792ea", "#8fb8ff"
+
+# The comparison this experiment is about is between three methods, not between
+# whichever controllers happen to be selected. Colour is therefore a property of
+# the method, so fixed PID is the same amber in every chart of every session and
+# the eye can carry a reading from one figure to the next. Seeds and regimes
+# within a method get successive shades of that method's hue.
+METHOD_COLORS = {
+    "pid": ("#ffb26b", "#e08a3c", "#ffd7a8", "#b56c22"),
+    "scheduled": ("#4fc3f7", "#2d8fbf", "#a5e4ff", "#1d6a90"),
+    "direct": ("#c792ea", "#9a63c0", "#e3c6f7", "#6f3f93"),
+}
+METHOD_LABELS = {
+    "pid": "Fixed PID",
+    "scheduled": "Scheduled PPO",
+    "direct": "Direct RL",
+}
+METHOD_ORDER = ("pid", "scheduled", "direct")
+
+# Kept clear of every METHOD_COLORS hue: the disturbance bands are drawn on top
+# of the method traces, and a band the colour of one of the methods reads as
+# that method's own shading.
+DELAY_TINT, NOISE_TINT = "#ff8fa3", "#6bd6c4"
 EVENT_TINTS = {"delay_step": DELAY_TINT, "noise_step": NOISE_TINT}
 EVENT_LABELS = {"delay_step": "dead time step", "noise_step": "sensor noise step"}
 
@@ -65,14 +86,22 @@ CORRIDOR_STRIDE = 5
 SAFE_COMPONENT = re.compile(r"^[a-zA-Z0-9_.-]+$")
 SAFE_ARM = re.compile(r"^[a-z0-9_]+$")
 
-DEFAULT_MODELS_ROOT = config.ROOT / "artifacts" / "models" / "protocol_v2"
+# The sealed five-seed matrix the thesis reports. `protocol_v2` was the default
+# while that run was the newest one; pointing at it now would open the dashboard
+# on superseded policies trained against the pre-fix reward and gain box.
+DEFAULT_MODELS_ROOT = config.ROOT / "artifacts" / "models" / "final"
 DEFAULT_CALIBRATION = config.ROOT / "artifacts" / "calibration" / "calibration.json"
 
-# Sliders that are plain numbers. (id, label, min, max, step, default)
+# The external conditions, and only those. (id, label, min, max, step, default)
+#
+# Both ranges run past the declared severity on purpose. `delay_severity_s` is
+# 0.15 s and that is the number the experiment reports, but the interesting
+# question at a viva is where the fixed PID actually breaks, and that is only
+# answerable if the slider goes further than the protocol does.
 SCENARIO_CONTROLS = (
-    ("delay", "Dead time (ms)", 0.0, 200.0, 1.0, 1000.0 * CONFIG.delay_severity_s),
-    ("noise", "Sensor noise (mm)", 0.0, 5.0, 0.05, 1000.0 * CONFIG.noise_severity_m),
-    ("event-time", "Transient starts at (s)", 0.0, 60.0, 0.1, CONFIG.transient_start_s),
+    ("delay", "Dead time (ms)", 0.0, 300.0, 1.0, 1000.0 * CONFIG.delay_severity_s),
+    ("noise", "Sensor noise (mm)", 0.0, 5.0, 0.01, 1000.0 * CONFIG.noise_severity_m),
+    ("event-time", "Disturbance starts at (s)", 0.0, 60.0, 0.5, CONFIG.transient_start_s),
     ("seed", "Noise seed", 0.0, 100000.0, 1.0, 20260819.0 % 100000),
 )
 GAIN_LABELS = ("Kp", "Ki", "Kd")
@@ -220,10 +249,13 @@ def discover_models(root: Path) -> list[dict[str, Any]]:
                 seed = int(seed_dir.name.split("_", 1)[1])
             except (IndexError, ValueError):
                 continue
+            regime = arm.rsplit("_", 1)[1]
             found.append(
                 {
                     "key": f"{arm}:{seed}",
-                    "label": f"{arm.replace('ppo_', '').replace('_', ' ')} / seed {seed}",
+                    # Short inside its method group, where the method is the
+                    # heading; the panels and legends prepend the method name.
+                    "label": f"{regime} · seed {seed}",
                     "arm": arm,
                     "seed": seed,
                     "mode": mode,
@@ -273,14 +305,43 @@ class InteractiveRunner:
 
     # -- controllers --
 
-    def controller_options(self) -> list[dict[str, str]]:
-        options = [
-            {"label": "Fixed PID — calibrated nominal", "value": "pid_global_nominal"},
-            {"label": "Fixed PID — calibrated robust", "value": "pid_global_robust"},
-            {"label": "Fixed PID — drawer gains", "value": "pid_custom"},
-        ]
-        options += [{"label": entry["label"], "value": entry["key"]} for entry in self.models]
-        return options
+    def controller_options(self) -> dict[str, list[dict[str, str]]]:
+        """Selectable controllers, grouped by the three compared methods.
+
+        Grouped rather than one flat list because the flat list made a
+        twenty-three-entry checklist in which the three-way comparison the
+        experiment is about was something you had to reconstruct by reading
+        arm-name prefixes.
+        """
+        grouped: dict[str, list[dict[str, str]]] = {
+            "pid": [
+                {"label": "calibrated nominal (Kp 250)", "value": "pid_global_nominal"},
+                {"label": "calibrated robust (Kp 8)", "value": "pid_global_robust"},
+                {"label": "hand-tuned (advanced sliders)", "value": "pid_custom"},
+            ],
+            "scheduled": [],
+            "direct": [],
+        }
+        for entry in self.models:
+            grouped[method_of(entry["key"])].append(
+                {"label": entry["label"], "value": entry["key"]}
+            )
+        return grouped
+
+    def default_selection(self) -> dict[str, list[str]]:
+        """One controller per method, so the first run is already a comparison.
+
+        The robust PID is the chosen default because it is the baseline the
+        learned arms have to beat; opening on the nominal arm would show a
+        controller that simply leaves the corridor whenever dead time is on.
+        """
+        grouped = self.controller_options()
+        selection = {"pid": ["pid_global_robust"], "scheduled": [], "direct": []}
+        for method in ("scheduled", "direct"):
+            options = grouped[method]
+            if options:
+                selection[method] = [options[0]["value"]]
+        return selection
 
     def _model_entry(self, key: str) -> dict[str, Any]:
         for entry in self.models:
@@ -383,10 +444,15 @@ class InteractiveRunner:
         if np.any(custom.as_array() < lower) or np.any(custom.as_array() > upper):
             raise ValueError("drawer gains are outside the calibrated scheduler bounds")
 
+        # Method order, not selection order: the legend then reads PID, then
+        # scheduled, then direct in every chart regardless of the order the
+        # checkboxes were ticked in.
+        keys.sort(key=lambda key: METHOD_ORDER.index(method_of(key)))
         scenario_key = json.dumps(asdict(scenario), sort_keys=True)
+        used: dict[str, int] = {}
         results: list[dict[str, Any]] = []
         with self._lock:
-            for index, key in enumerate(keys):
+            for key in keys:
                 # Only `pid_custom` depends on the gain sliders; keying the
                 # others without the gains is what keeps their episodes stable
                 # while the sliders move.
@@ -397,8 +463,20 @@ class InteractiveRunner:
                 if result is None:
                     result = self._run_one(scenario, key, custom)
                     self._cache[cache_key] = result
+                method = method_of(key)
+                shades = METHOD_COLORS[method]
+                shade = used.get(method, 0)
+                used[method] = shade + 1
                 results.append(
-                    {**result, "color": CONTROLLER_COLORS[index % len(CONTROLLER_COLORS)]}
+                    {
+                        **result,
+                        "method": method,
+                        # Legends and panel headings name the method first: a
+                        # bare "disturbed · seed 11" does not say whether it
+                        # steered the wheels or scheduled a gain.
+                        "label": f"{METHOD_LABELS[method]} — {result['label']}",
+                        "color": shades[shade % len(shades)],
+                    }
                 )
         return results
 
@@ -419,9 +497,9 @@ class InteractiveRunner:
             )
             predictor = None
             label = {
-                "pid_global_nominal": "Fixed PID (nominal)",
-                "pid_global_robust": "Fixed PID (robust)",
-                "pid_custom": "Fixed PID (drawer)",
+                "pid_global_nominal": "calibrated nominal",
+                "pid_global_robust": "calibrated robust",
+                "pid_custom": "hand-tuned",
             }[key]
             note = f"Kp {gains.kp:.3f}, Ki {gains.ki:.3f}, Kd {gains.kd:.3f}"
         else:
@@ -449,6 +527,21 @@ class InteractiveRunner:
             "metrics": result.metrics,
             "trace": result.trace,
         }
+
+
+def method_of(key: str) -> str:
+    """Which of the three compared methods a controller key belongs to.
+
+    Everything user-visible is grouped and coloured by this, so it is derived
+    from the key in exactly one place rather than re-guessed per chart.
+    """
+    if key.startswith("pid_"):
+        return "pid"
+    if key.startswith("ppo_scheduler_"):
+        return "scheduled"
+    if key.startswith("ppo_direct_"):
+        return "direct"
+    raise ValueError(f"controller '{key}' belongs to no known method")
 
 
 def _slugify(text: str) -> str:
@@ -738,6 +831,152 @@ def disturbance_figure(rows: list[dict[str, Any]], scenario: Scenario) -> go.Fig
     return figure
 
 
+# --- method comparison -----------------------------------------------------
+#
+# The per-controller panels below answer "what did this controller do". These
+# answer "how did the three methods differ", which is the question the thesis
+# actually asks, and it cannot be read off three panels stacked vertically --
+# a 4 mm difference in tracking error is invisible unless the traces share an
+# axis. Every chart here is one signal, all selected controllers, one time base.
+
+
+def _derive(rows: list[dict[str, Any]], key: str) -> list[float]:
+    """One trace column, including the two that are differences of columns."""
+    if key == "steer_differential":
+        left = _values(rows, "u_left_applied")
+        right = _values(rows, "u_right_applied")
+        return [a - b for a, b in zip(left, right)]
+    if key == "delay_ms":
+        return [1000.0 * value for value in _values(rows, "actuator_delay_s")]
+    return _values(rows, key)
+
+
+def comparison_figure(
+    results: list[dict[str, Any]],
+    scenario: Scenario,
+    key: str,
+    title: str,
+    y_label: str,
+    *,
+    height: int = 270,
+    scale: float = 1.0,
+    label_events: bool = False,
+    reference_lines: tuple[float, ...] = (),
+    empty_note: str = "",
+) -> go.Figure:
+    figure = _base_figure(title, y_label, height=height, x_label="time (s)")
+    trace_end = max(
+        (max(_values(result["trace"], "t"), default=0.0) for result in results),
+        default=0.0,
+    )
+    _event_bands(figure, scenario, trace_end, label=label_events)
+    for line in reference_lines:
+        figure.add_hline(
+            y=line,
+            line=dict(color=BAD if line else LINE, width=1, dash="dot" if line else "solid"),
+        )
+    drawn = 0
+    for result in results:
+        values = _derive(result["trace"], key)
+        if not values:
+            continue
+        drawn += 1
+        figure.add_scatter(
+            x=_values(result["trace"], "t"),
+            y=[value * scale for value in values],
+            mode="lines",
+            line=dict(color=result["color"], width=1.8),
+            name=result["label"],
+        )
+    if not drawn and empty_note:
+        figure.add_annotation(
+            text=empty_note,
+            showarrow=False,
+            font=dict(size=12, color=MUTED),
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.5,
+        )
+    figure.update_layout(
+        showlegend=True,
+        legend=dict(orientation="h", y=1.18, x=0.0, font=dict(size=10)),
+    )
+    return figure
+
+
+def comparison_view(results: list[dict[str, Any]], scenario: Scenario) -> list[Any]:
+    """The five overlaid charts, in the order the argument is made."""
+    graph = {"displaylogo": False, "responsive": True}
+    return [
+        dcc.Graph(
+            figure=comparison_figure(
+                results,
+                scenario,
+                "distance_m",
+                "tracking error — distance off the path, all methods",
+                "distance (mm)",
+                height=300,
+                scale=1000.0,
+                label_events=True,
+                reference_lines=(1000.0 * CORRIDOR_M,),
+            ),
+            config=graph,
+        ),
+        dcc.Graph(
+            figure=comparison_figure(
+                results,
+                scenario,
+                "delay_ms",
+                "the disturbance — dead time actually in force",
+                "dead time (ms)",
+                height=200,
+            ),
+            config=graph,
+        ),
+        dcc.Graph(
+            figure=comparison_figure(
+                results,
+                scenario,
+                "omega_applied",
+                "steering actuator — yaw rate delivered to the plant",
+                "omega (rad/s)",
+                reference_lines=(0.0,),
+            ),
+            config=graph,
+        ),
+        dcc.Graph(
+            figure=comparison_figure(
+                results,
+                scenario,
+                "steer_differential",
+                "wheel differential — applied left minus right (saturates at the dotted line)",
+                "u_left - u_right",
+                reference_lines=(
+                    2.0 * float(CONFIG.actuator_limit),
+                    -2.0 * float(CONFIG.actuator_limit),
+                    0.0,
+                ),
+            ),
+            config=graph,
+        ),
+        dcc.Graph(
+            figure=comparison_figure(
+                results,
+                scenario,
+                "kp",
+                "proportional gain — the scheduler's decision variable",
+                "Kp",
+                empty_note=(
+                    "No selected controller exposes a PID gain. Direct RL has none: "
+                    "it commands the wheels itself."
+                ),
+            ),
+            config=graph,
+        ),
+    ]
+
+
 # --- metric rendering ------------------------------------------------------
 
 
@@ -799,6 +1038,60 @@ def full_metrics(metrics: dict[str, Any]) -> html.Details:
             ),
         ]
     )
+
+
+SCOREBOARD_COLUMNS = (
+    ("finished", "Completed", "{}"),
+    ("failure_adjusted_error_m", "J_FA (mm)", "{:.2f}"),
+    ("mean_distance_m", "Mean err (mm)", "{:.2f}"),
+    ("max_distance_m", "Max err (mm)", "{:.2f}"),
+    ("steer_total_variation_per_s", "Steer TV /s", "{:.2f}"),
+    ("gain_total_variation_per_s", "Gain TV /s", "{:.2f}"),
+)
+# Columns whose stored unit is metres and whose readable unit is millimetres.
+SCOREBOARD_MM = {"failure_adjusted_error_m", "mean_distance_m", "max_distance_m"}
+
+
+def scoreboard(results: list[dict[str, Any]]) -> html.Table:
+    """One row per controller, the numbers the comparison turns on.
+
+    J_FA is the primary outcome and is reported in millimetres here because
+    metres puts four leading zeros in front of every difference that matters.
+    """
+    header = html.Tr(
+        [html.Th("Controller")] + [html.Th(label) for _key, label, _fmt in SCOREBOARD_COLUMNS]
+    )
+    body = []
+    for result in results:
+        cells = [
+            html.Td(
+                [
+                    html.Span(
+                        className="swatch",
+                        style={"backgroundColor": result["color"]},
+                    ),
+                    result["label"],
+                ],
+                className="scoreboard-name",
+            )
+        ]
+        for key, _label, fmt in SCOREBOARD_COLUMNS:
+            value = result["metrics"].get(key)
+            if key == "finished":
+                text = "Yes" if value else "No"
+            elif key.startswith("gain_") and result["method"] == "direct":
+                # env.py records 0.0 here for direct mode. Printed as a number it
+                # reads as "this policy held its gains perfectly steady", which is
+                # the opposite of the truth: it has no gains at all.
+                text = "n/a"
+            elif value is None or value == "":
+                text = "—"
+            else:
+                number = float(value)
+                text = fmt.format(number * 1000.0 if key in SCOREBOARD_MM else number)
+            cells.append(html.Td(text))
+        body.append(html.Tr(cells))
+    return html.Table([html.Thead(header), html.Tbody(body)], className="scoreboard")
 
 
 def _gain_activity(rows: list[dict[str, Any]]) -> str:
@@ -868,15 +1161,39 @@ def interactive_view(
                         ]
                     ),
                     html.P(header, className="controller-note"),
+                    scoreboard(results),
                     dcc.Graph(
                         figure=trajectory_figure(results, scenario, height=520), config=graph
                     ),
                 ],
                 className="comparison-panel overlay-panel",
             ),
+            html.Section(
+                [
+                    html.H2("Method comparison"),
+                    html.P(
+                        "Every selected controller on one time base. The shaded band "
+                        "marks the disturbance, so what happens after its left edge is "
+                        "the whole result.",
+                        className="controller-note",
+                    ),
+                    *comparison_view(results, scenario),
+                ],
+                className="comparison-panel overlay-panel",
+            ),
             html.Div(
                 [
-                    controller_panel(result, scenario, runner.calibration)
+                    controller_panel(
+                        result,
+                        scenario,
+                        # The scheduler acts inside its own box (Kp 5-300), not
+                        # the PID search box. Drawing its gain trace against the
+                        # wrong bounds is how a policy pinned at its ceiling
+                        # gets mistaken for one sitting comfortably mid-range.
+                        runner.scheduler_calibration
+                        if result["method"] == "scheduled"
+                        else runner.calibration,
+                    )
                     for result in results
                 ],
                 className="comparison-grid",
@@ -1019,11 +1336,29 @@ def batch_view(
             dcc.Graph(figure=deviation_figure(rows, scenario), config=graph),
             dcc.Graph(figure=speed_figure(rows, scenario), config=graph),
             dcc.Graph(figure=command_figure(rows), config=graph),
-            dcc.Graph(figure=gain_figure(rows, GainCalibration.development_default()), config=graph),
+            dcc.Graph(figure=gain_figure(rows, _batch_gain_box(results)), config=graph),
             dcc.Graph(figure=disturbance_figure(rows, scenario), config=graph),
         ]
     children.append(html.Div([html.Section(panel, className="comparison-panel")], className="comparison-grid"))
     return html.Div(children)
+
+
+def _batch_gain_box(results: Path) -> GainCalibration:
+    """The scheduler gain box that produced this run, not today's.
+
+    evaluate.py copies `scheduler_calibration.json` into every results
+    directory precisely so an old run can be read back correctly. Drawing its
+    gain traces against the current box would put the bounds in the wrong
+    place -- the box moved from Kp 10-50 to Kp 5-300 mid-project, and a policy
+    saturating its old ceiling would look like it was sitting mid-range.
+    """
+    candidate = results / "scheduler_calibration.json"
+    if candidate.is_file():
+        try:
+            return GainCalibration.load(candidate)
+        except (OSError, ValueError, KeyError, json.JSONDecodeError):
+            pass
+    return GainCalibration.development_default()
 
 
 def _batch_scenario(
@@ -1130,6 +1465,7 @@ def create_app(
 
     options = path_options()
     controller_options = runner.controller_options()
+    default_selection = runner.default_selection()
     app = Dash(__name__, title="Thesis Experiment")
     app.layout = html.Div(
         [
@@ -1138,8 +1474,9 @@ def create_app(
                 [
                     html.H1("Thesis Experiment"),
                     html.P(
-                        "One plant, one scenario definition, several controllers. The "
-                        "interactive tab runs episodes on demand and produces nothing "
+                        "Fixed PID, scheduled PPO and direct RL on one plant, one path "
+                        "and one disturbance. Set the dead time and the sensor noise in "
+                        "the drawer, then run. The interactive tab produces nothing "
                         "official; the batch tab reads a frozen evaluate.py artifact. "
                         f"Gain box: {runner.calibration_label}.",
                         className="kicker",
@@ -1218,29 +1555,50 @@ def create_app(
                         className="group-hint",
                     ),
                     *[slider_row(*control) for control in SCENARIO_CONTROLS],
-                    html.Div("Controllers", className="section-title"),
+                    html.Div("Methods to compare", className="section-title"),
                     html.Div(
-                        [
-                            dcc.Checklist(
-                                id="controller-select",
-                                options=controller_options,
-                                value=[controller_options[0]["value"]],
-                            )
-                        ],
-                        className="selector",
-                    ),
-                    html.Div(runner.model_error, className="group-hint") if runner.model_error else html.Div(),
-                    html.Div("Fixed PID gains (drawer arm)", className="section-title"),
-                    html.Div(
-                        "These drive the 'drawer gains' controller only. The calibrated "
-                        "nominal and robust arms are unaffected, so moving a slider never "
-                        "changes what you are comparing against.",
+                        "Tick one of each to see the three-way comparison. Ticking two "
+                        "seeds of the same method is how seed spread shows up.",
                         className="group-hint",
                     ),
-                    *[slider_row(*control) for control in gains],
-                    html.Button(
-                        "Reset to calibrated nominal", id="gain-reset",
-                        className="drawer-close", n_clicks=0,
+                    *[
+                        html.Div(
+                            [
+                                html.Label(METHOD_LABELS[method]),
+                                # Always in the tree, even with no options: Dash
+                                # raises on a callback whose State id is absent,
+                                # so an untrained method would take the page down
+                                # rather than simply offer nothing to tick.
+                                dcc.Checklist(
+                                    id=f"select-{method}",
+                                    options=controller_options[method],
+                                    value=default_selection[method],
+                                ),
+                                html.Div("no trained artifact found", className="group-hint")
+                                if not controller_options[method]
+                                else html.Div(),
+                            ],
+                            className="selector method-group",
+                        )
+                        for method in METHOD_ORDER
+                    ],
+                    html.Div(runner.model_error, className="group-hint") if runner.model_error else html.Div(),
+                    html.Details(
+                        [
+                            html.Summary("Advanced — hand-tuned PID gains"),
+                            html.Div(
+                                "These drive the 'hand-tuned' PID arm only. The calibrated "
+                                "nominal and robust arms are unaffected, so moving a slider "
+                                "never changes what you are comparing against.",
+                                className="group-hint",
+                            ),
+                            *[slider_row(*control) for control in gains],
+                            html.Button(
+                                "Reset to calibrated nominal", id="gain-reset",
+                                className="drawer-close", n_clicks=0,
+                            ),
+                        ],
+                        className="advanced",
                     ),
                     html.Div("Run", className="section-title"),
                     html.Div(
@@ -1372,7 +1730,9 @@ def create_app(
         State("s-noise", "value"),
         State("s-event-time", "value"),
         State("s-seed", "value"),
-        State("controller-select", "value"),
+        State("select-pid", "value"),
+        State("select-scheduled", "value"),
+        State("select-direct", "value"),
         State("s-gain-kp", "value"),
         State("s-gain-ki", "value"),
         State("s-gain-kd", "value"),
@@ -1381,8 +1741,9 @@ def create_app(
         tab, run_clicks, batch_controller, batch_scenario,
         path_spec, speed, evaluation_mode, condition,
         delay_ms, noise_mm, event_time, seed,
-        controller_keys, kp, ki, kd,
+        pid_keys, scheduled_keys, direct_keys, kp, ki, kd,
     ):
+        controller_keys = (pid_keys or []) + (scheduled_keys or []) + (direct_keys or [])
         if tab == "batch":
             if batch is None:
                 return html.Div(
