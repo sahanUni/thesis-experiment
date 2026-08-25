@@ -501,3 +501,17 @@ h1 { margin: 0 0 .2rem; font-size: 1.5rem; }
   background: var(--panel-2) !important;
   color: var(--ink) !important;
 }
+
+/* The per-panel MuJoCo replay button --------------------------------------- */
+
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .8rem;
+}
+
+.replay-button { flex: none; white-space: nowrap; }
+
+.replay-status:empty { display: none; }
+.replay-status { margin-bottom: 1rem; }

@@ -24,6 +24,8 @@ import argparse
 import json
 import math
 import re
+import subprocess
+import sys
 from dataclasses import asdict
 from functools import lru_cache
 from pathlib import Path
@@ -32,7 +34,7 @@ from typing import Any, Iterable
 
 import numpy as np
 import plotly.graph_objects as go
-from dash import Dash, Input, Output, State, ctx, dcc, html, no_update
+from dash import ALL, Dash, Input, Output, State, ctx, dcc, html, no_update
 
 import config
 from calibration import GainCalibration, PIDGains
@@ -89,12 +91,8 @@ SAFE_ARM = re.compile(r"^[a-z0-9_]+$")
 DEFAULT_MODELS_ROOT = config.ROOT / "artifacts" / "models" / "final"
 DEFAULT_CALIBRATION = config.ROOT / "artifacts" / "calibration" / "calibration.json"
 
-# The external conditions, and only those. (id, label, min, max, step, default)
+# The external conditions, and only those.
 #
-# Both ranges run past the declared severity on purpose. `delay_severity_s` is
-# 0.15 s and that is the number the experiment reports, but the interesting
-# question at a viva is where the fixed PID actually breaks, and that is only
-# answerable if the slider goes further than the protocol does.
 # Named because the slider and the validator behind it must agree. They did not:
 # the slider offered 300 ms of dead time and the validator rejected anything over
 # 200, so the top third of the track produced an error instead of an episode.
@@ -108,6 +106,7 @@ DELAY_MAX_MS = 400.0
 NOISE_MAX_MM = 200.0
 EVENT_START_MAX_S = 60.0
 
+# (id, label, min, max, step, default)
 SCENARIO_CONTROLS = (
     ("delay", "Dead time (ms)", 0.0, DELAY_MAX_MS, 1.0, 1000.0 * CONFIG.delay_severity_s),
     ("noise", "Sensor noise (mm)", 0.0, NOISE_MAX_MM, 0.01, 1000.0 * CONFIG.noise_severity_m),
@@ -1148,7 +1147,22 @@ def controller_panel(
         note += "  ·  " + activity
     return html.Section(
         [
-            html.H2(result["label"]),
+            html.Div(
+                [
+                    html.H2(result["label"]),
+                    # Per panel rather than in the drawer: the button is next to
+                    # the charts for the controller it replays, so there is no
+                    # step where you pick a controller twice and have to trust
+                    # that the two picks agreed.
+                    html.Button(
+                        "▶  Watch in MuJoCo",
+                        id={"role": "replay", "key": result["key"]},
+                        className="drawer-close replay-button",
+                        n_clicks=0,
+                    ),
+                ],
+                className="panel-head",
+            ),
             html.P(note, className="controller-note"),
             headline_metrics(result["metrics"]),
             full_metrics(result["metrics"]),
@@ -1498,7 +1512,13 @@ def create_app(
                 id="controls-drawer",
                 className="controls panel drawer open",
             ),
-            html.Main([html.Div(id="tab-content")], className="results"),
+            html.Main(
+                [
+                    html.Div(id="replay-status", className="replay-status"),
+                    html.Div(id="tab-content"),
+                ],
+                className="results",
+            ),
         ],
         className="app",
     )
@@ -1605,6 +1625,69 @@ def create_app(
             return interactive_view(results_list, scenario, runner)
         except (ValueError, KeyError, FileNotFoundError) as error:
             return html.Div(str(error), className="message error")
+
+    @app.callback(
+        Output("replay-status", "children"),
+        Input({"role": "replay", "key": ALL}, "n_clicks"),
+        State("path-select", "value"),
+        State("speed-select", "value"),
+        State("mode-select", "value"),
+        State("condition-select", "value"),
+        State("s-delay", "value"),
+        State("s-noise", "value"),
+        State("s-event-time", "value"),
+        State("s-seed", "value"),
+        State("s-gain-kp", "value"),
+        State("s-gain-ki", "value"),
+        State("s-gain-kd", "value"),
+        prevent_initial_call=True,
+    )
+    def launch_replay(
+        clicks, path_spec, speed, evaluation_mode, condition,
+        delay_ms, noise_mm, event_time, seed, kp, ki, kd,
+    ):
+        """Open the MuJoCo viewer on the episode this panel is showing.
+
+        A separate process because MuJoCo's viewer wants the main thread and
+        would fight the Dash server for it. The scenario is passed as the same
+        drawer values the charts were built from, and `replay.py` rebuilds it
+        through `scenario_from_controls`, so the window cannot end up showing a
+        different episode from the one on screen.
+        """
+        triggered = ctx.triggered_id
+        # The ALL pattern fires once on render with every count at zero. Without
+        # this a viewer window would open by itself every time a run finished.
+        # `clicks` is normally the list of counts, one per matched button, but
+        # is a bare int when a single component matches the pattern.
+        counts = clicks if isinstance(clicks, (list, tuple)) else [clicks]
+        if not isinstance(triggered, dict) or not any(counts or []):
+            return no_update
+        command = [
+            sys.executable,
+            str(config.ROOT / "replay.py"),
+            "--controller", str(triggered["key"]),
+            "--path", str(path_spec),
+            "--speed", str(float(speed)),
+            "--mode", str(evaluation_mode),
+            "--condition", str(condition),
+            "--delay-ms", str(float(delay_ms)),
+            "--noise-mm", str(float(noise_mm)),
+            "--event-time", str(float(event_time)),
+            "--noise-seed", str(float(seed)),
+            "--gains", f"{float(kp)},{float(ki)},{float(kd)}",
+            "--models-root", str(runner.models_root),
+        ]
+        try:
+            subprocess.Popen(command, cwd=str(config.ROOT))
+        except OSError as error:
+            return html.Div(f"Could not start the viewer: {error}", className="message error")
+        return html.Div(
+            f"Opening {triggered['key']} in a MuJoCo window. It re-simulates the "
+            "episode, so give it a few seconds. The pink ghost is where the "
+            "corrupted measurement puts the car; the metrics are printed in its "
+            "console to check against the panel.",
+            className="message",
+        )
 
     @app.server.after_request
     def security_headers(response):
